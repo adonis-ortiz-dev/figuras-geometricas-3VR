@@ -1,0 +1,2712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Feria de Logros 2026 - Figuras Geométricas VR</title>
+
+<script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:white;
+}
+
+body{
+    overflow:hidden;
+}
+
+#scene{
+    position:fixed;
+    inset:0;
+}
+
+.ui{
+    position:fixed;
+    z-index:10;
+    inset:0;
+    pointer-events:none;
+}
+
+.panel{
+    pointer-events:auto;
+    position:absolute;
+    left:16px;
+    top:16px;
+    width:min(350px,calc(100vw - 32px));
+    max-height:calc(100vh - 32px);
+    overflow:auto;
+
+    background:rgba(10,20,35,.93);
+    border:1px solid rgba(255,255,255,.25);
+    border-radius:18px;
+
+    padding:18px;
+
+    box-shadow:0 10px 40px #0008;
+}
+
+h1{
+    font-size:24px;
+    margin:0 0 8px;
+}
+
+h2{
+    font-size:18px;
+    margin:14px 0 8px;
+}
+
+.sub{
+    font-size:13px;
+    color:#cbd5e1;
+    line-height:1.45;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+button,
+select,
+input{
+    font:inherit;
+}
+
+button{
+    border:0;
+    border-radius:9px;
+    padding:10px;
+    background:#2563eb;
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+}
+
+button.secondary{
+    background:#475569;
+}
+
+button.warning{
+    background:#b45309;
+}
+
+button:hover{
+    filter:brightness(1.12);
+}
+
+select,
+input{
+    width:100%;
+    padding:9px;
+    border-radius:8px;
+    border:1px solid #64748b;
+    background:#111827;
+    color:#fff;
+    margin:4px 0 10px;
+}
+
+.hidden{
+    display:none!important;
+}
+
+.result{
+    margin-top:10px;
+    padding:10px;
+    border-radius:9px;
+    background:#14532d;
+}
+
+.team{
+    line-height:1.6;
+    font-size:14px;
+}
+
+.status{
+    position:absolute;
+    bottom:14px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    background:rgba(10,20,35,.9);
+    border-radius:999px;
+
+    padding:9px 15px;
+
+    font-size:13px;
+    text-align:center;
+
+    max-width:92vw;
+}
+
+.vr-help{
+    font-size:12px;
+    color:#cbd5e1;
+    margin-top:8px;
+}
+
+.formula{
+    font-family:Georgia,serif;
+    font-size:15px;
+}
+
+.note{
+    font-size:12px;
+    color:#fef3c7;
+}
+
+</style>
+</head>
+
+
+<body>
+
+<a-scene
+    id="scene"
+    background="color:#9fb4c0"
+
+    renderer="
+        colorManagement:true;
+        physicallyCorrectLights:true
+    "
+
+    vr-mode-ui="enabled:true"
+
+    loading-screen="
+        dotsColor:#2563eb;
+        backgroundColor:#0f172a
+    "
+>
+
+<!-- ========================================================= -->
+<!-- RECURSOS -->
+<!-- ========================================================= -->
+
+<a-assets>
+
+    <!--
+    IMPORTANTE:
+    Coloca la imagen de textura que me enviaste
+    en la misma carpeta que este index.html.
+
+    Nombre exacto:
+    image(20261015-191535).png
+    -->
+
+    <img
+        id="wallTexture"
+        src="image(20261015-191535).png"
+        crossorigin="anonymous"
+    >
+
+</a-assets>
+
+
+<!-- ========================================================= -->
+<!-- ILUMINACIÓN -->
+<!-- ========================================================= -->
+
+<a-entity
+    light="type:ambient;intensity:0.85">
+</a-entity>
+
+<a-entity
+    light="type:directional;intensity:0.85"
+    position="-4 7 4">
+</a-entity>
+
+<a-entity
+    light="type:point;intensity:0.55;distance:22"
+    position="0 4 -2">
+</a-entity>
+
+
+<!-- ========================================================= -->
+<!-- PISO -->
+<!-- ========================================================= -->
+
+<a-box
+    position="0 -0.12 -2"
+    width="16"
+    height="0.24"
+    depth="12"
+    color="#76543c">
+</a-box>
+
+
+<!-- ========================================================= -->
+<!-- TECHO -->
+<!-- ========================================================= -->
+
+<a-box
+    position="0 5 -2"
+    width="16"
+    height="0.16"
+    depth="12"
+    color="#e8e6de">
+</a-box>
+
+
+<!-- ========================================================= -->
+<!-- LAS 4 PAREDES -->
+<!-- ========================================================= -->
+
+<!-- PARED FRONTAL -->
+
+<a-box
+    position="0 2.5 -8"
+    width="16"
+    height="5"
+    depth="0.18"
+
+    material="
+        src:#wallTexture;
+        repeat:5 2;
+        roughness:0.9
+    "
+>
+</a-box>
+
+
+<!-- PARED TRASERA -->
+
+<a-box
+    position="0 2.5 4"
+    width="16"
+    height="5"
+    depth="0.18"
+
+    material="
+        src:#wallTexture;
+        repeat:5 2;
+        roughness:0.9
+    "
+>
+</a-box>
+
+
+<!-- PARED IZQUIERDA -->
+
+<a-box
+    position="-8 2.5 -2"
+    width="0.18"
+    height="5"
+    depth="12"
+
+    material="
+        src:#wallTexture;
+        repeat:4 2;
+        roughness:0.9
+    "
+>
+</a-box>
+
+
+<!-- PARED DERECHA -->
+
+<a-box
+    position="8 2.5 -2"
+    width="0.18"
+    height="5"
+    depth="12"
+
+    material="
+        src:#wallTexture;
+        repeat:4 2;
+        roughness:0.9
+    "
+>
+</a-box>
+
+
+<!-- ========================================================= -->
+<!-- VENTANAS -->
+<!-- ========================================================= -->
+
+<a-box
+    position="-7.88 2.8 -5.2"
+    width="0.06"
+    height="2.1"
+    depth="1.8"
+    color="#8fd0e8">
+</a-box>
+
+<a-box
+    position="-7.88 2.8 -2.8"
+    width="0.06"
+    height="2.1"
+    depth="1.8"
+    color="#8fd0e8">
+</a-box>
+
+<a-box
+    position="-7.88 2.8 -0.4"
+    width="0.06"
+    height="2.1"
+    depth="1.8"
+    color="#8fd0e8">
+</a-box>
+
+<a-box
+    position="-7.88 2.8 2"
+    width="0.06"
+    height="2.1"
+    depth="1.8"
+    color="#8fd0e8">
+</a-box>
+
+
+<!-- Marcos de ventanas -->
+
+<a-box
+    position="-7.77 2.8 -5.2"
+    width="0.08"
+    height="2.25"
+    depth="0.08"
+    color="#f4f1e8">
+</a-box>
+
+<a-box
+    position="-7.77 2.8 -2.8"
+    width="0.08"
+    height="2.25"
+    depth="0.08"
+    color="#f4f1e8">
+</a-box>
+
+<a-box
+    position="-7.77 2.8 -0.4"
+    width="0.08"
+    height="2.25"
+    depth="0.08"
+    color="#f4f1e8">
+</a-box>
+
+<a-box
+    position="-7.77 2.8 2"
+    width="0.08"
+    height="2.25"
+    depth="0.08"
+    color="#f4f1e8">
+</a-box>
+
+
+<!-- ========================================================= -->
+<!-- PUERTA -->
+<!-- ========================================================= -->
+
+<a-box
+    position="-5.5 1.35 3.86"
+    width="1.5"
+    height="2.7"
+    depth="0.08"
+    color="#7b5237">
+</a-box>
+
+<a-box
+    position="-5.5 1.35 3.79"
+    width="1.32"
+    height="2.52"
+    depth="0.05"
+    color="#a8784d">
+</a-box>
+
+<!-- Ventana de la puerta -->
+
+<a-box
+    position="-5.5 2.05 3.73"
+    width="0.9"
+    height="0.55"
+    depth="0.03"
+    color="#78b8d0">
+</a-box>
+
+<!-- Manija -->
+
+<a-sphere
+    position="-5.02 1.4 3.70"
+    radius="0.055"
+    color="#f4d58b">
+</a-sphere>
+
+
+<!-- ========================================================= -->
+<!-- PIZARRA -->
+<!-- ========================================================= -->
+
+<a-box
+    position="0 2.8 -7.83"
+    width="5.2"
+    height="1.8"
+    depth="0.13"
+    color="#76563d">
+</a-box>
+
+<a-box
+    position="0 2.8 -7.74"
+    width="4.85"
+    height="1.48"
+    depth="0.05"
+    color="#174d3a">
+</a-box>
+
+
+<!-- Fondo del título -->
+
+<a-plane
+    position="0 3.0 -7.69"
+    width="4.45"
+    height="0.64"
+    color="#0c3528">
+</a-plane>
+
+
+<!-- TÍTULO -->
+
+<a-text
+    value="FERIA DE LOGROS 2026"
+
+    position="0 3.04 -7.60"
+
+    align="center"
+    baseline="center"
+
+    width="5.8"
+
+    color="#ffe45c"
+
+    outlineColor="#0a2118"
+    outlineWidth="0.10"
+>
+</a-text>
+
+
+<!-- Subtítulo -->
+
+<a-text
+    value="¡APRENDER • CREAR • COMPARTIR!"
+
+    position="0 2.76 -7.60"
+
+    align="center"
+    baseline="center"
+
+    width="4.9"
+
+    color="#ffffff"
+>
+</a-text>
+
+
+<a-text
+    value="MATEMÁTICAS"
+
+    position="-1.75 2.38 -7.67"
+
+    width="3.2"
+
+    color="#ffffff"
+>
+</a-text>
+
+
+<!-- ========================================================= -->
+<!-- RELOJ -->
+<!-- ========================================================= -->
+
+<a-cylinder
+    position="3.25 3.72 -7.68"
+    rotation="90 0 0"
+    radius="0.34"
+    height="0.07"
+    color="#f5f5f0">
+</a-cylinder>
+
+<a-cylinder
+    position="3.25 3.72 -7.63"
+    rotation="90 0 0"
+    radius="0.28"
+    height="0.05"
+    color="#25313b">
+</a-cylinder>
+
+<a-box
+    position="3.25 3.84 -7.57"
+    width="0.025"
+    height="0.20"
+    depth="0.025"
+    color="#fff">
+</a-box>
+
+<a-box
+    position="3.34 3.72 -7.57"
+    width="0.18"
+    height="0.025"
+    depth="0.025"
+    color="#fff"
+    rotation="0 0 90">
+</a-box>
+
+
+<!-- ========================================================= -->
+<!-- ESCRITORIO DEL PROFESOR -->
+<!-- ========================================================= -->
+
+<a-box
+    position="0 0.95 -6.2"
+    width="2"
+    height="0.14"
+    depth="0.85"
+    color="#906745">
+</a-box>
+
+<a-box
+    position="-0.8 0.48 -6.2"
+    width="0.09"
+    height="0.8"
+    depth="0.65"
+    color="#8d9698">
+</a-box>
+
+<a-box
+    position="0.8 0.48 -6.2"
+    width="0.09"
+    height="0.8"
+    depth="0.65"
+    color="#8d9698">
+</a-box>
+
+
+<!-- ========================================================= -->
+<!-- LÁMPARAS -->
+<!-- ========================================================= -->
+
+<a-box
+    position="-3 4.65 -2"
+    width="2.5"
+    height="0.1"
+    depth="0.35"
+    color="#fff9d9">
+</a-box>
+
+<a-box
+    position="2.5 4.65 -3"
+    width="2.5"
+    height="0.1"
+    depth="0.35"
+    color="#fff9d9">
+</a-box>
+
+<a-box
+    position="0 4.65 1"
+    width="2.5"
+    height="0.1"
+    depth="0.35"
+    color="#fff9d9">
+</a-box>
+
+
+<!-- ========================================================= -->
+<!-- PUPITRES -->
+<!-- ========================================================= -->
+
+<a-entity id="desks"></a-entity>
+
+
+<!-- ========================================================= -->
+<!-- FIGURA 3D -->
+<!-- ========================================================= -->
+
+<a-entity
+    id="figureRoot"
+    position="0 1.6 -3.5"
+>
+
+    <!-- CUBO -->
+
+    <a-box
+        id="cube"
+        class="figureHit"
+
+        width="1.4"
+        height="1.4"
+        depth="1.4"
+
+        color="#299ff2"
+
+        material="
+            roughness:0.28
+        "
+    >
+    </a-box>
+
+
+    <!-- ESFERA -->
+
+    <a-sphere
+        id="sphere"
+        class="figureHit"
+
+        radius="0.82"
+
+        color="#f59e0b"
+
+        visible="false"
+
+        material="
+            roughness:0.25
+        "
+    >
+    </a-sphere>
+
+
+    <!-- CILINDRO -->
+
+    <a-cylinder
+        id="cylinder"
+        class="figureHit"
+
+        radius="0.65"
+        height="1.5"
+
+        color="#22c55e"
+
+        visible="false"
+
+        material="
+            roughness:0.3
+        "
+    >
+    </a-cylinder>
+
+
+    <!-- CONO -->
+
+    <a-cone
+        id="cone"
+        class="figureHit"
+
+        radius-bottom="0.82"
+        radius-top="0"
+        height="1.65"
+
+        color="#d946ef"
+
+        visible="false"
+    >
+    </a-cone>
+
+
+    <!-- PIRÁMIDE -->
+
+    <a-entity
+        id="pyramid"
+        visible="false"
+    >
+
+        <a-cone
+            class="figureHit"
+
+            radius-bottom="0.86"
+            radius-top="0"
+
+            height="1.55"
+
+            segments-radial="4"
+
+            rotation="0 45 0"
+
+            color="#fb7185"
+        >
+        </a-cone>
+
+    </a-entity>
+
+</a-entity>
+
+
+<!-- ========================================================= -->
+<!-- BOTÓN VOLVER -->
+<!-- ========================================================= -->
+
+<a-entity
+    id="returnWallButton"
+
+    position="7.78 2.0 -1.2"
+
+    rotation="0 -90 0"
+
+    class="fixedVRUI"
+>
+
+    <a-plane
+        id="returnButton"
+
+        class="interactable"
+
+        width="1.9"
+        height="0.86"
+
+        color="#1769d2"
+    >
+    </a-plane>
+
+
+    <a-text
+        value="VOLVER"
+
+        position="0 0.10 0.04"
+
+        align="center"
+        baseline="center"
+
+        width="3.4"
+
+        color="#ffffff"
+    >
+    </a-text>
+
+
+    <a-text
+        value="MENÚ PRINCIPAL"
+
+        position="0 -0.20 0.04"
+
+        align="center"
+        baseline="center"
+
+        width="2.55"
+
+        color="#dbeafe"
+    >
+    </a-text>
+
+</a-entity>
+
+
+<!-- ========================================================= -->
+<!-- CÁMARA -->
+<!-- ========================================================= -->
+
+<a-entity
+    id="cameraRig"
+    position="0 0 0"
+>
+
+    <a-camera
+        id="camera"
+
+        position="0 1.6 0"
+
+        look-controls="enabled:true"
+
+        wasd-controls="enabled:true"
+    >
+    </a-camera>
+
+</a-entity>
+
+
+<!-- ========================================================= -->
+<!-- MANDOS META QUEST -->
+<!-- ========================================================= -->
+
+<a-entity
+    id="rightController"
+
+    laser-controls="hand:right"
+
+    raycaster="
+        objects:.figureHit,.interactable;
+        far:12;
+        lineColor:#62d8ff;
+        lineOpacity:0.85
+    "
+>
+</a-entity>
+
+
+<a-entity
+    id="leftController"
+
+    laser-controls="hand:left"
+
+    raycaster="
+        objects:.figureHit,.interactable;
+        far:12;
+        lineColor:#62d8ff;
+        lineOpacity:0.85
+    "
+>
+</a-entity>
+
+
+<!-- ========================================================= -->
+<!-- SEGUIMIENTO DE MANOS -->
+<!-- ========================================================= -->
+
+<a-entity
+    id="rightHand"
+
+    hand-tracking-controls="
+        hand:right
+    "
+>
+</a-entity>
+
+
+<a-entity
+    id="leftHand"
+
+    hand-tracking-controls="
+        hand:left
+    "
+>
+</a-entity>
+
+
+</a-scene>
+
+
+<!-- ========================================================= -->
+<!-- INTERFAZ PRINCIPAL -->
+<!-- ========================================================= -->
+
+<div class="ui">
+
+<div class="panel">
+
+<h1>
+📐 Figuras Geométricas VR
+</h1>
+
+<p class="sub">
+
+Explora un salón escolar en realidad virtual,
+aprende las características de las figuras
+y calcula sus áreas.
+
+</p>
+
+
+<!-- BOTONES PRINCIPALES -->
+
+<div class="grid">
+
+<button onclick="showSection('start')">
+Iniciar
+</button>
+
+<button onclick="showSection('calc')">
+Calculadora
+</button>
+
+<button
+    class="secondary"
+    onclick="showSection('info')"
+>
+Información
+</button>
+
+<button
+    class="warning"
+    onclick="enterVR()"
+>
+VR
+</button>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- INICIAR -->
+<!-- ========================================================= -->
+
+<section id="start">
+
+<h2>
+Selecciona una figura
+</h2>
+
+
+<div class="grid">
+
+<button onclick="selectFigure('cube')">
+Cubo
+</button>
+
+<button onclick="selectFigure('sphere')">
+Esfera
+</button>
+
+<button onclick="selectFigure('cylinder')">
+Cilindro
+</button>
+
+<button onclick="selectFigure('cone')">
+Cono
+</button>
+
+<button onclick="selectFigure('pyramid')">
+Pirámide
+</button>
+
+</div>
+
+
+<h2 id="figureName">
+Cubo
+</h2>
+
+
+<p
+    id="figureDescription"
+    class="sub"
+>
+Sólido con 6 caras cuadradas iguales.
+</p>
+
+
+<p
+    id="figureCharacteristics"
+    class="sub"
+>
+
+Caras: 6 · Aristas: 12 · Vértices: 8
+
+<br>
+
+<span class="formula">
+Área total: A = 6a²
+</span>
+
+</p>
+
+
+<h2>
+Controles
+</h2>
+
+
+<p class="sub">
+
+En la página principal la figura
+<b>NO puede ser agarrada con los mandos</b>.
+
+Solo se modifica mediante estos botones.
+
+</p>
+
+
+<div class="grid">
+
+
+<button
+    class="secondary"
+    onclick="moveFigure(-0.2,0,0)"
+>
+Mover ←
+</button>
+
+
+<button
+    class="secondary"
+    onclick="moveFigure(0.2,0,0)"
+>
+Mover →
+</button>
+
+
+<button
+    class="secondary"
+    onclick="moveFigure(0,0,-0.2)"
+>
+Acercar
+</button>
+
+
+<button
+    class="secondary"
+    onclick="moveFigure(0,0,0.2)"
+>
+Alejar
+</button>
+
+
+<button
+    class="secondary"
+    onclick="rotateFigure(-15)"
+>
+Girar ↶
+</button>
+
+
+<button
+    class="secondary"
+    onclick="rotateFigure(15)"
+>
+Girar ↷
+</button>
+
+
+<button
+    class="secondary"
+    onclick="scaleFigure(0.9)"
+>
+Reducir
+</button>
+
+
+<button
+    class="secondary"
+    onclick="scaleFigure(1.1)"
+>
+Aumentar
+</button>
+
+
+<button
+    onclick="resetFigure()"
+>
+↺ Posición original
+</button>
+
+
+</div>
+
+
+<p class="vr-help">
+
+<b>En VR:</b>
+
+apunta a la figura y mantén el gatillo
+para agarrarla.
+
+Muévete con ella y utiliza el joystick
+para girarla o acercarla/alejarla.
+
+</p>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- CALCULADORA -->
+<!-- ========================================================= -->
+
+<section
+    id="calc"
+    class="hidden"
+>
+
+<h2>
+🧮 Calculadora de área
+</h2>
+
+
+<label>
+Figura
+</label>
+
+
+<select
+    id="calcFigure"
+    onchange="renderCalcFields()"
+>
+
+<option value="cube">
+Cubo
+</option>
+
+<option value="sphere">
+Esfera
+</option>
+
+<option value="cylinder">
+Cilindro
+</option>
+
+<option value="cone">
+Cono
+</option>
+
+<option value="pyramid">
+Pirámide de base cuadrada
+</option>
+
+</select>
+
+
+<div id="calcFields"></div>
+
+
+<button
+    onclick="calculateArea()"
+>
+Calcular área
+</button>
+
+
+<div
+    id="calcResult"
+    class="result hidden"
+>
+</div>
+
+
+<p>
+
+<button
+    class="secondary"
+    onclick="showSection('start')"
+>
+Volver al menú
+</button>
+
+</p>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- INFORMACIÓN -->
+<!-- ========================================================= -->
+
+<section
+    id="info"
+    class="hidden"
+>
+
+<h2>
+ℹ️ Información
+</h2>
+
+
+<p class="sub">
+
+Esta aplicación educativa permite
+explorar figuras geométricas en 3D
+dentro de un salón virtual.
+
+También permite consultar sus
+características y calcular sus áreas.
+
+</p>
+
+
+<h2>
+Integrantes
+</h2>
+
+
+<ul class="team">
+
+<li>
+Oscar Rafael Melgar Macal
+</li>
+
+<li>
+Oscar Alejandro Rivas Padilla
+</li>
+
+<li>
+Adonis Fernando Ortiz Arévalo
+</li>
+
+<li>
+Cristian Valdemar Alas Melgar
+</li>
+
+<li>
+Blanca Abigail Erazo Martínez
+</li>
+
+<li>
+Rosmery Sarai Miranda Salazar
+</li>
+
+<li>
+Yuditza Maribel Maldonado Tzul
+</li>
+
+</ul>
+
+
+<button
+    class="secondary"
+    onclick="showSection('start')"
+>
+Volver
+</button>
+
+</section>
+
+
+</div>
+
+
+<div
+    id="status"
+    class="status"
+>
+Selecciona una figura para comenzar.
+</div>
+
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script>
+
+
+const scene =
+document.getElementById('scene');
+
+
+const figureRoot =
+document.getElementById('figureRoot');
+
+
+/* ========================================================= */
+/* POSICIÓN ORIGINAL */
+/* ========================================================= */
+
+const HOME = {
+
+    x:0,
+
+    y:1.6,
+
+    z:-3.5,
+
+    rx:0,
+
+    ry:0,
+
+    rz:0,
+
+    s:1
+
+};
+
+
+let current =
+'cube';
+
+
+let figureScale =
+1;
+
+
+let vrInteractionEnabled =
+false;
+
+
+let grabbedBy =
+null;
+
+
+let grabDistance =
+2.4;
+
+
+/* ========================================================= */
+/* INFORMACIÓN DE FIGURAS */
+/* ========================================================= */
+
+const data = {
+
+
+cube:{
+
+name:'Cubo',
+
+desc:
+'Sólido con 6 caras cuadradas iguales.',
+
+chars:
+'Caras: 6 · Aristas: 12 · Vértices: 8<br>' +
+'<span class="formula">Área total: A = 6a²</span>'
+
+},
+
+
+sphere:{
+
+name:'Esfera',
+
+desc:
+'Sólido redondo cuya superficie está a la misma distancia del centro.',
+
+chars:
+'Superficie curva · Sin aristas ni vértices<br>' +
+'<span class="formula">Área: A = 4πr²</span>'
+
+},
+
+
+cylinder:{
+
+name:'Cilindro',
+
+desc:
+'Sólido con dos bases circulares iguales y una superficie lateral curva.',
+
+chars:
+'2 bases circulares · 2 aristas curvas<br>' +
+'<span class="formula">Área: A = 2πr(r+h)</span>'
+
+},
+
+
+cone:{
+
+name:'Cono',
+
+desc:
+'Sólido con una base circular y un vértice.',
+
+chars:
+'1 base circular · 1 vértice<br>' +
+'<span class="formula">Área: A = πr(r+g)</span>'
+
+},
+
+
+pyramid:{
+
+name:'Pirámide',
+
+desc:
+'Pirámide de base cuadrada formada por una base y cuatro caras triangulares.',
+
+chars:
+'5 caras · 8 aristas · 5 vértices<br>' +
+'<span class="formula">Área: A = a² + 2ag</span>'
+
+}
+
+};
+
+
+/* ========================================================= */
+/* CAMBIO DE APARTADOS */
+/* ========================================================= */
+
+function showSection(id){
+
+    [
+
+        'start',
+
+        'calc',
+
+        'info'
+
+    ].forEach(x=>{
+
+        document
+        .getElementById(x)
+        .classList
+        .toggle(
+            'hidden',
+            x!==id
+        );
+
+    });
+
+
+    if(id==='calc'){
+
+        document
+        .getElementById('calcFigure')
+        .value=current;
+
+        renderCalcFields();
+
+    }
+
+}
+
+
+/* ========================================================= */
+/* RESTAURAR FIGURA */
+/* ========================================================= */
+
+function resetFigure(){
+
+    figureRoot.setAttribute(
+
+        'position',
+
+        {
+
+            x:HOME.x,
+
+            y:HOME.y,
+
+            z:HOME.z
+
+        }
+
+    );
+
+
+    figureRoot.setAttribute(
+
+        'rotation',
+
+        {
+
+            x:HOME.rx,
+
+            y:HOME.ry,
+
+            z:HOME.rz
+
+        }
+
+    );
+
+
+    figureRoot.setAttribute(
+
+        'scale',
+
+        {
+
+            x:HOME.s,
+
+            y:HOME.s,
+
+            z:HOME.s
+
+        }
+
+    );
+
+
+    figureScale=1;
+
+}
+
+
+/* ========================================================= */
+/* SELECCIONAR FIGURA */
+/* ========================================================= */
+
+function selectFigure(id){
+
+    current=id;
+
+
+    [
+
+        'cube',
+
+        'sphere',
+
+        'cylinder',
+
+        'cone',
+
+        'pyramid'
+
+    ].forEach(k=>{
+
+        document
+        .getElementById(k)
+        .setAttribute(
+            'visible',
+            k===id
+        );
+
+    });
+
+
+    document
+    .getElementById('figureName')
+    .textContent=data[id].name;
+
+
+    document
+    .getElementById('figureDescription')
+    .textContent=data[id].desc;
+
+
+    document
+    .getElementById('figureCharacteristics')
+    .innerHTML=data[id].chars;
+
+
+    resetFigure();
+
+
+    document
+    .getElementById('status')
+    .textContent=
+        data[id].name+
+        ' seleccionada.';
+
+}
+
+
+/* ========================================================= */
+/* MOVER FIGURA DESDE LA PÁGINA */
+/* ========================================================= */
+
+function moveFigure(dx,dy,dz){
+
+    /* Nunca se puede usar estos controles para
+       agarrar la figura mientras estamos en VR. */
+
+    if(scene.is('vr-mode'))
+        return;
+
+
+    const p =
+        figureRoot.getAttribute(
+            'position'
+        );
+
+
+    figureRoot.setAttribute(
+
+        'position',
+
+        {
+
+            x:
+            Math.max(
+                -6.5,
+                Math.min(
+                    6.5,
+                    p.x+dx
+                )
+            ),
+
+            y:
+            Math.max(
+                .7,
+                Math.min(
+                    3.8,
+                    p.y+dy
+                )
+            ),
+
+            z:
+            Math.max(
+                -6.8,
+                Math.min(
+                    2.8,
+                    p.z+dz
+                )
+            )
+
+        }
+
+    );
+
+}
+
+
+/* ========================================================= */
+/* GIRAR FIGURA */
+/* ========================================================= */
+
+function rotateFigure(d){
+
+    if(scene.is('vr-mode'))
+        return;
+
+
+    const r =
+        figureRoot.getAttribute(
+            'rotation'
+        );
+
+
+    figureRoot.setAttribute(
+
+        'rotation',
+
+        {
+
+            x:r.x,
+
+            y:r.y+d,
+
+            z:r.z
+
+        }
+
+    );
+
+}
+
+
+/* ========================================================= */
+/* CAMBIAR TAMAÑO */
+/* ========================================================= */
+
+function scaleFigure(f){
+
+    if(scene.is('vr-mode'))
+        return;
+
+
+    figureScale =
+        Math.max(
+            .45,
+            Math.min(
+                1.8,
+                figureScale*f
+            )
+        );
+
+
+    figureRoot.setAttribute(
+
+        'scale',
+
+        {
+
+            x:figureScale,
+
+            y:figureScale,
+
+            z:figureScale
+
+        }
+
+    );
+
+}
+
+
+/* ========================================================= */
+/* CREAR PUPITRES */
+/* ========================================================= */
+
+function addDesk(x,z){
+
+    const parts=[
+
+        [
+            x,
+            .82,
+            z,
+            1.45,
+            .12,
+            .88,
+            '#96704f'
+        ],
+
+        [
+            x-.55,
+            .42,
+            z-.27,
+            .08,
+            .78,
+            .08,
+            '#8d9698'
+        ],
+
+        [
+            x+.55,
+            .42,
+            z-.27,
+            .08,
+            .78,
+            .08,
+            '#8d9698'
+        ],
+
+        [
+            x-.55,
+            .42,
+            z+.27,
+            .08,
+            .78,
+            .08,
+            '#8d9698'
+        ],
+
+        [
+            x+.55,
+            .42,
+            z+.27,
+            .08,
+            .78,
+            .08,
+            '#8d9698'
+        ],
+
+        [
+            x,
+            .46,
+            z+.72,
+            .75,
+            .09,
+            .55,
+            '#a9825f'
+        ],
+
+        [
+            x-.32,
+            .24,
+            z+.72,
+            .06,
+            .43,
+            .06,
+            '#8d9698'
+        ],
+
+        [
+            x+.32,
+            .24,
+            z+.72,
+            .06,
+            .43,
+            .06,
+            '#8d9698'
+        ]
+
+    ];
+
+
+    parts.forEach(d=>{
+
+        let e =
+            document.createElement(
+                'a-box'
+            );
+
+
+        e.setAttribute(
+            'position',
+            `${d[0]} ${d[1]} ${d[2]}`
+        );
+
+
+        e.setAttribute(
+            'width',
+            d[3]
+        );
+
+
+        e.setAttribute(
+            'height',
+            d[4]
+        );
+
+
+        e.setAttribute(
+            'depth',
+            d[5]
+        );
+
+
+        e.setAttribute(
+            'color',
+            d[6]
+        );
+
+
+        document
+        .getElementById('desks')
+        .appendChild(e);
+
+    });
+
+}
+
+
+[
+    -5.3,
+    -3.3,
+    -1.3,
+    .7
+
+].forEach(z=>{
+
+    addDesk(-5.3,z);
+
+    addDesk(5.3,z);
+
+});
+
+
+/* ========================================================= */
+/* CALCULADORA */
+/* ========================================================= */
+
+function renderCalcFields(){
+
+    const k =
+        document
+        .getElementById(
+            'calcFigure'
+        )
+        .value;
+
+
+    const i =
+        (id,l)=>
+        `<label>${l}</label>
+        <input
+            id="${id}"
+            type="number"
+            min="0.01"
+            step="any"
+            placeholder="Ej. 3"
+        >`;
+
+
+    let h='';
+
+
+    if(k==='cube')
+        h=i(
+            'side',
+            'Lado (a)'
+        );
+
+
+    if(k==='sphere')
+        h=i(
+            'radius',
+            'Radio (r)'
+        );
+
+
+    if(k==='cylinder')
+
+        h=
+            i(
+                'radius',
+                'Radio (r)'
+            )+
+
+            i(
+                'height',
+                'Altura (h)'
+            );
+
+
+    if(k==='cone')
+
+        h=
+            i(
+                'radius',
+                'Radio (r)'
+            )+
+
+            i(
+                'height',
+                'Altura (h)'
+            );
+
+
+    if(k==='pyramid')
+
+        h=
+            i(
+                'side',
+                'Lado de la base (a)'
+            )+
+
+            i(
+                'apothem',
+                'Apotema lateral (g)'
+            );
+
+
+    document
+    .getElementById(
+        'calcFields'
+    )
+    .innerHTML=h;
+
+
+    document
+    .getElementById(
+        'calcResult'
+    )
+    .classList
+    .add('hidden');
+
+}
+
+
+/* ========================================================= */
+/* OBTENER VALOR */
+/* ========================================================= */
+
+function val(id){
+
+    const n =
+        Number(
+            document
+            .getElementById(id)
+            .value
+        );
+
+
+    return n>0?n:NaN;
+
+}
+
+
+/* ========================================================= */
+/* CALCULAR ÁREA */
+/* ========================================================= */
+
+function calculateArea(){
+
+    const k =
+        document
+        .getElementById(
+            'calcFigure'
+        )
+        .value;
+
+
+    let a;
+
+    let f;
+
+
+    /* CUBO */
+
+    if(k==='cube'){
+
+        let x=val('side');
+
+        a=6*x*x;
+
+        f='A = 6a²';
+
+    }
+
+
+    /* ESFERA */
+
+    else if(k==='sphere'){
+
+        let r=val('radius');
+
+        a=4*Math.PI*r*r;
+
+        f='A = 4πr²';
+
+    }
+
+
+    /* CILINDRO */
+
+    else if(k==='cylinder'){
+
+        let r=val('radius');
+
+        let h=val('height');
+
+        a=
+            2*
+            Math.PI*
+            r*
+            (r+h);
+
+        f='A = 2πr(r+h)';
+
+    }
+
+
+    /* CONO */
+
+    else if(k==='cone'){
+
+        let r=val('radius');
+
+        let h=val('height');
+
+        let g=
+            Math.sqrt(
+                r*r+h*h
+            );
+
+
+        a=
+            Math.PI*
+            r*
+            (r+g);
+
+
+        f=
+            'A = πr(r+g), g = √(r²+h²)';
+
+    }
+
+
+    /* PIRÁMIDE */
+
+    else{
+
+        let s=val('side');
+
+        let g=val('apothem');
+
+
+        a=
+            s*s+
+            2*s*g;
+
+
+        f=
+            'A = a² + 2ag';
+
+    }
+
+
+    const box =
+        document
+        .getElementById(
+            'calcResult'
+        );
+
+
+    box
+    .classList
+    .remove('hidden');
+
+
+    box.textContent =
+
+        Number.isFinite(a)
+
+        ?
+
+        `Área total: ${a.toFixed(2)} unidades² · ${f}`
+
+        :
+
+        'Completa todos los valores con números positivos.';
+
+}
+
+
+/* ========================================================= */
+/* DETECTAR FIGURA CON EL RAYCASTER */
+/* ========================================================= */
+
+function isFigureHit(controller){
+
+    const rc =
+        controller
+        .components
+        .raycaster;
+
+
+    if(!rc)
+        return false;
+
+
+    return (
+
+        rc.intersections || []
+
+    ).some(hit=>{
+
+        let n =
+            hit.object &&
+            hit.object.el;
+
+
+        while(n){
+
+            if(n===figureRoot)
+                return true;
+
+
+            n=n.parentEl;
+
+        }
+
+
+        return false;
+
+    });
+
+}
+
+
+/* ========================================================= */
+/* DETECTAR BOTÓN VOLVER */
+/* ========================================================= */
+
+function isReturnHit(controller){
+
+    const rc =
+        controller
+        .components
+        .raycaster;
+
+
+    if(!rc)
+        return false;
+
+
+    return (
+
+        rc.intersections || []
+
+    ).some(hit=>{
+
+        let n =
+            hit.object &&
+            hit.object.el;
+
+
+        while(n){
+
+            if(
+                n.id==='returnButton' ||
+                n.id==='returnWallButton'
+            )
+
+                return true;
+
+
+            n=n.parentEl;
+
+        }
+
+
+        return false;
+
+    });
+
+}
+
+
+/* ========================================================= */
+/* VARIABLES PARA MANIPULAR FIGURA EN VR */
+/* ========================================================= */
+
+const dir =
+    new THREE.Vector3();
+
+
+const pos =
+    new THREE.Vector3();
+
+
+/* ========================================================= */
+/* COLOCAR FIGURA DELANTE DEL CONTROL */
+/* ========================================================= */
+
+function placeFigureOnRay(controller){
+
+    controller
+    .object3D
+    .getWorldPosition(pos);
+
+
+    controller
+    .object3D
+    .getWorldDirection(dir);
+
+
+    const p =
+        pos.clone()
+        .addScaledVector(
+            dir,
+            grabDistance
+        );
+
+
+    figureRoot.setAttribute(
+
+        'position',
+
+        {
+
+            x:
+            Math.max(
+                -6.5,
+                Math.min(
+                    6.5,
+                    p.x
+                )
+            ),
+
+            y:
+            Math.max(
+                .7,
+                Math.min(
+                    3.8,
+                    p.y
+                )
+            ),
+
+            z:
+            Math.max(
+                -7.2,
+                Math.min(
+                    3,
+                    p.z
+                )
+            )
+
+        }
+
+    );
+
+}
+
+
+/* ========================================================= */
+/* CONTROLES META QUEST */
+/* ========================================================= */
+
+function setupController(id){
+
+    const c =
+        document.getElementById(id);
+
+
+    /* GATILLO */
+
+    c.addEventListener(
+        'triggerdown',
+        ()=>{
+
+
+            /*
+            MUY IMPORTANTE:
+
+            Fuera de VR los mandos NO pueden
+            agarrar la figura.
+
+            Solo funcionan cuando VR está activo.
+            */
+
+
+            if(
+                !scene.is('vr-mode') ||
+                !vrInteractionEnabled
+            )
+
+                return;
+
+
+            /* VOLVER */
+
+            if(
+                isReturnHit(c)
+            ){
+
+                returnToMain();
+
+                return;
+
+            }
+
+
+            /* FIGURA */
+
+            if(
+                isFigureHit(c)
+            ){
+
+                grabbedBy=c;
+
+                placeFigureOnRay(c);
+
+            }
+
+        }
+    );
+
+
+    /* SOLTAR */
+
+    c.addEventListener(
+        'triggerup',
+        ()=>{
+
+            if(
+                grabbedBy===c
+            )
+
+                grabbedBy=null;
+
+        }
+    );
+
+
+    /* JOYSTICK */
+
+    c.addEventListener(
+        'thumbstickmoved',
+        e=>{
+
+
+            if(
+                !scene.is('vr-mode') ||
+                !vrInteractionEnabled ||
+                grabbedBy!==c
+            )
+
+                return;
+
+
+            const x=
+                e.detail.x || 0;
+
+
+            const y=
+                e.detail.y || 0;
+
+
+            const r=
+                figureRoot
+                .getAttribute(
+                    'rotation'
+                );
+
+
+            /*
+            IZQUIERDA / DERECHA:
+            GIRAR
+            */
+
+            if(
+                Math.abs(x)>.12
+            ){
+
+                figureRoot.setAttribute(
+
+                    'rotation',
+
+                    {
+
+                        x:r.x,
+
+                        y:
+                        r.y-
+                        x*4,
+
+                        z:r.z
+
+                    }
+
+                );
+
+            }
+
+
+            /*
+            ARRIBA / ABAJO:
+            ACERCAR / ALEJAR
+            */
+
+            if(
+                Math.abs(y)>.12
+            ){
+
+                grabDistance=
+                    Math.max(
+                        1,
+                        Math.min(
+                            5,
+                            grabDistance-
+                            y*.12
+                        )
+                    );
+
+            }
+
+
+            placeFigureOnRay(c);
+
+        }
+
+    );
+
+}
+
+
+setupController(
+    'rightController'
+);
+
+
+setupController(
+    'leftController'
+);
+
+
+/* ========================================================= */
+/* ENTRAR A VR */
+/* ========================================================= */
+
+function enterVR(){
+
+    if(
+        scene.enterVR
+    ){
+
+        scene.enterVR();
+
+    }
+
+}
+
+
+/* ========================================================= */
+/* VOLVER AL MENÚ */
+/* ========================================================= */
+
+function returnToMain(){
+
+    /*
+    Soltar figura
+    */
+
+    grabbedBy=null;
+
+
+    /*
+    Desactivar interacción VR
+    */
+
+    vrInteractionEnabled=false;
+
+
+    /*
+    Restaurar distancia
+    */
+
+    grabDistance=2.4;
+
+
+    /*
+    MUY IMPORTANTE:
+
+    La figura vuelve a su lugar original.
+    */
+
+    resetFigure();
+
+
+    /*
+    Mostrar menú principal
+    */
+
+    showSection(
+        'start'
+    );
+
+
+    document
+    .getElementById(
+        'status'
+    )
+    .textContent=
+        'Menú principal · la figura solo se controla con los botones.';
+
+
+    /*
+    Salir de VR
+    */
+
+    if(
+        scene.is('vr-mode')
+    ){
+
+        scene.exitVR();
+
+    }
+
+}
+
+
+/* ========================================================= */
+/* BOTÓN VOLVER DE LA PARED */
+/* ========================================================= */
+
+document
+.getElementById(
+    'returnButton'
+)
+.addEventListener(
+    'click',
+    returnToMain
+);
+
+
+/* ========================================================= */
+/* ENTRAR EN VR */
+/* ========================================================= */
+
+scene.addEventListener(
+    'enter-vr',
+    ()=>{
+
+        vrInteractionEnabled=true;
+
+
+        document
+        .getElementById(
+            'status'
+        )
+        .textContent=
+            'VR activo · apunta y mantén el gatillo para agarrar la figura.';
+
+    }
+);
+
+
+/* ========================================================= */
+/* SALIR DE VR */
+/* ========================================================= */
+
+scene.addEventListener(
+    'exit-vr',
+    ()=>{
+
+        grabbedBy=null;
+
+
+        vrInteractionEnabled=false;
+
+
+        /*
+        Al salir de VR también
+        regresa la figura a su lugar.
+        */
+
+        resetFigure();
+
+
+        document
+        .getElementById(
+            'status'
+        )
+        .textContent=
+            'Modo normal · usa los botones del panel.';
+
+    }
+);
+
+
+/* ========================================================= */
+/* COLISIÓN / LÍMITES DEL SALÓN */
+/* ========================================================= */
+
+/*
+   Estos límites mantienen la cámara dentro del aula.
+
+   PARED IZQUIERDA  = X -8
+   PARED DERECHA    = X  8
+   PARED FRONTAL    = Z -8
+   PARED TRASERA    = Z  4
+
+   Se deja un pequeño margen para evitar
+   que la cámara quede dentro de la pared.
+*/
+
+AFRAME.registerComponent(
+    'classroom-boundary',
+    {
+
+        tick:function(){
+
+            const p =
+                this.el
+                .object3D
+                .position;
+
+
+            /*
+            Límite izquierdo
+            */
+
+            p.x=
+                Math.max(
+                    -7.35,
+                    Math.min(
+                        7.35,
+                        p.x
+                    )
+                );
+
+
+            /*
+            Límite frontal / trasero
+            */
+
+            p.z=
+                Math.max(
+                    -7.35,
+                    Math.min(
+                        3.35,
+                        p.z
+                    )
+                );
+
+        }
+
+    }
+);
+
+
+/*
+Asignar el límite a la cámara.
+*/
+
+document
+.getElementById(
+    'camera'
+)
+.setAttribute(
+    'classroom-boundary',
+    ''
+);
+
+
+/* ========================================================= */
+/* INICIO */
+/* ========================================================= */
+
+selectFigure(
+    'cube'
+);
+
+
+showSection(
+    'start'
+);
+
+</script>
+
+</body>
+</html>
