@@ -1,2712 +1,1400 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Feria de Logros 2026 - Figuras Geométricas VR</title>
-
-<script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
-
-<style>
-
-*{
-    box-sizing:border-box;
-}
-
-html,body{
-    margin:0;
-    width:100%;
-    height:100%;
-    font-family:Arial,sans-serif;
-    background:#0f172a;
-    color:white;
-}
-
-body{
-    overflow:hidden;
-}
-
-#scene{
-    position:fixed;
-    inset:0;
-}
-
-.ui{
-    position:fixed;
-    z-index:10;
-    inset:0;
-    pointer-events:none;
-}
-
-.panel{
-    pointer-events:auto;
-    position:absolute;
-    left:16px;
-    top:16px;
-    width:min(350px,calc(100vw - 32px));
-    max-height:calc(100vh - 32px);
-    overflow:auto;
-
-    background:rgba(10,20,35,.93);
-    border:1px solid rgba(255,255,255,.25);
-    border-radius:18px;
-
-    padding:18px;
-
-    box-shadow:0 10px 40px #0008;
-}
-
-h1{
-    font-size:24px;
-    margin:0 0 8px;
-}
-
-h2{
-    font-size:18px;
-    margin:14px 0 8px;
-}
-
-.sub{
-    font-size:13px;
-    color:#cbd5e1;
-    line-height:1.45;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-}
-
-button,
-select,
-input{
-    font:inherit;
-}
-
-button{
-    border:0;
-    border-radius:9px;
-    padding:10px;
-    background:#2563eb;
-    color:#fff;
-    font-weight:700;
-    cursor:pointer;
-}
-
-button.secondary{
-    background:#475569;
-}
-
-button.warning{
-    background:#b45309;
-}
-
-button:hover{
-    filter:brightness(1.12);
-}
-
-select,
-input{
-    width:100%;
-    padding:9px;
-    border-radius:8px;
-    border:1px solid #64748b;
-    background:#111827;
-    color:#fff;
-    margin:4px 0 10px;
-}
-
-.hidden{
-    display:none!important;
-}
-
-.result{
-    margin-top:10px;
-    padding:10px;
-    border-radius:9px;
-    background:#14532d;
-}
-
-.team{
-    line-height:1.6;
-    font-size:14px;
-}
-
-.status{
-    position:absolute;
-    bottom:14px;
-    left:50%;
-
-    transform:translateX(-50%);
-
-    background:rgba(10,20,35,.9);
-    border-radius:999px;
-
-    padding:9px 15px;
-
-    font-size:13px;
-    text-align:center;
-
-    max-width:92vw;
-}
-
-.vr-help{
-    font-size:12px;
-    color:#cbd5e1;
-    margin-top:8px;
-}
-
-.formula{
-    font-family:Georgia,serif;
-    font-size:15px;
-}
-
-.note{
-    font-size:12px;
-    color:#fef3c7;
-}
-
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoLab XR | Feria de Logros Matemática 2026</title>
+  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+ 
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: #030712;
+      color: #eef7ff;
+    }
+ 
+    a-scene { position: fixed; inset: 0; }
+ 
+    #app {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+    }
+ 
+    .panel {
+      pointer-events: auto;
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      width: min(330px, calc(100vw - 28px));
+      max-height: calc(100vh - 28px);
+      overflow-y: auto;
+      padding: 17px;
+      border: 1px solid #45d9ff77;
+      border-radius: 16px;
+      background: rgba(4, 15, 35, .94);
+      box-shadow: 0 0 30px #00c8ff22, 0 18px 45px #0009;
+    }
+ 
+    h1 { font-size: 1.35rem; margin: 7px 0; }
+    h2 { font-size: 1rem; margin: 10px 0; }
+    p { color: #c6d9ea; line-height: 1.45; }
+    .small { font-size: .82rem; color: #9cb7cf; }
+ 
+    .eyebrow {
+      color: #55e6ff;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .7rem;
+      font-weight: bold;
+    }
+ 
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 12px 0;
+    }
+ 
+    button {
+      padding: 10px;
+      border: 1px solid #56dfff77;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #087da8, #1552ad);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+ 
+    button:hover { filter: brightness(1.2); }
+    button.secondary { background: #12243a; }
+    button.active { background: #087f8c; border-color: #67ffe0; }
+    .hidden { display: none !important; }
+ 
+    .field { display: grid; gap: 5px; margin: 10px 0; }
+ 
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #45617c;
+      border-radius: 8px;
+      background: #071426;
+      color: white;
+    }
+ 
+    .result {
+      margin-top: 10px;
+      padding: 11px;
+      background: #062a36;
+      border: 1px solid #1ac6bd55;
+      border-radius: 10px;
+      line-height: 1.5;
+    }
+ 
+    #status {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: calc(100vw - 25px);
+      padding: 10px 14px;
+      border: 1px solid #43d9ff55;
+      border-radius: 999px;
+      background: #030c1ee8;
+      font-size: .8rem;
+      text-align: center;
+    }
+ 
+    .team { font-size: .88rem; line-height: 1.7; }
+ 
+    @media (max-width: 700px) {
+      .panel {
+        top: 8px;
+        left: 8px;
+        width: min(280px, calc(100vw - 16px));
+        max-height: 55vh;
+        padding: 12px;
+      }
+    }
+  </style>
 </head>
-
-
+ 
 <body>
-
-<a-scene
-    id="scene"
-    background="color:#9fb4c0"
-
-    renderer="
-        colorManagement:true;
-        physicallyCorrectLights:true
-    "
-
-    vr-mode-ui="enabled:true"
-
-    loading-screen="
-        dotsColor:#2563eb;
-        backgroundColor:#0f172a
-    "
->
-
-<!-- ========================================================= -->
-<!-- RECURSOS -->
-<!-- ========================================================= -->
-
-<a-assets>
-
-    <!--
-    IMPORTANTE:
-    Coloca la imagen de textura que me enviaste
-    en la misma carpeta que este index.html.
-
-    Nombre exacto:
-    image(20261015-191535).png
-    -->
-
-    <img
-        id="wallTexture"
-        src="image(20261015-191535).png"
-        crossorigin="anonymous"
-    >
-
-</a-assets>
-
-
-<!-- ========================================================= -->
-<!-- ILUMINACIÓN -->
-<!-- ========================================================= -->
-
-<a-entity
-    light="type:ambient;intensity:0.85">
-</a-entity>
-
-<a-entity
-    light="type:directional;intensity:0.85"
-    position="-4 7 4">
-</a-entity>
-
-<a-entity
-    light="type:point;intensity:0.55;distance:22"
-    position="0 4 -2">
-</a-entity>
-
-
-<!-- ========================================================= -->
-<!-- PISO -->
-<!-- ========================================================= -->
-
-<a-box
-    position="0 -0.12 -2"
-    width="16"
-    height="0.24"
-    depth="12"
-    color="#76543c">
-</a-box>
-
-
-<!-- ========================================================= -->
-<!-- TECHO -->
-<!-- ========================================================= -->
-
-<a-box
-    position="0 5 -2"
-    width="16"
-    height="0.16"
-    depth="12"
-    color="#e8e6de">
-</a-box>
-
-
-<!-- ========================================================= -->
-<!-- LAS 4 PAREDES -->
-<!-- ========================================================= -->
-
-<!-- PARED FRONTAL -->
-
-<a-box
-    position="0 2.5 -8"
-    width="16"
-    height="5"
-    depth="0.18"
-
-    material="
-        src:#wallTexture;
-        repeat:5 2;
-        roughness:0.9
-    "
->
-</a-box>
-
-
-<!-- PARED TRASERA -->
-
-<a-box
-    position="0 2.5 4"
-    width="16"
-    height="5"
-    depth="0.18"
-
-    material="
-        src:#wallTexture;
-        repeat:5 2;
-        roughness:0.9
-    "
->
-</a-box>
-
-
-<!-- PARED IZQUIERDA -->
-
-<a-box
-    position="-8 2.5 -2"
-    width="0.18"
-    height="5"
-    depth="12"
-
-    material="
-        src:#wallTexture;
-        repeat:4 2;
-        roughness:0.9
-    "
->
-</a-box>
-
-
-<!-- PARED DERECHA -->
-
-<a-box
-    position="8 2.5 -2"
-    width="0.18"
-    height="5"
-    depth="12"
-
-    material="
-        src:#wallTexture;
-        repeat:4 2;
-        roughness:0.9
-    "
->
-</a-box>
-
-
-<!-- ========================================================= -->
-<!-- VENTANAS -->
-<!-- ========================================================= -->
-
-<a-box
-    position="-7.88 2.8 -5.2"
-    width="0.06"
-    height="2.1"
-    depth="1.8"
-    color="#8fd0e8">
-</a-box>
-
-<a-box
-    position="-7.88 2.8 -2.8"
-    width="0.06"
-    height="2.1"
-    depth="1.8"
-    color="#8fd0e8">
-</a-box>
-
-<a-box
-    position="-7.88 2.8 -0.4"
-    width="0.06"
-    height="2.1"
-    depth="1.8"
-    color="#8fd0e8">
-</a-box>
-
-<a-box
-    position="-7.88 2.8 2"
-    width="0.06"
-    height="2.1"
-    depth="1.8"
-    color="#8fd0e8">
-</a-box>
-
-
-<!-- Marcos de ventanas -->
-
-<a-box
-    position="-7.77 2.8 -5.2"
-    width="0.08"
-    height="2.25"
-    depth="0.08"
-    color="#f4f1e8">
-</a-box>
-
-<a-box
-    position="-7.77 2.8 -2.8"
-    width="0.08"
-    height="2.25"
-    depth="0.08"
-    color="#f4f1e8">
-</a-box>
-
-<a-box
-    position="-7.77 2.8 -0.4"
-    width="0.08"
-    height="2.25"
-    depth="0.08"
-    color="#f4f1e8">
-</a-box>
-
-<a-box
-    position="-7.77 2.8 2"
-    width="0.08"
-    height="2.25"
-    depth="0.08"
-    color="#f4f1e8">
-</a-box>
-
-
-<!-- ========================================================= -->
-<!-- PUERTA -->
-<!-- ========================================================= -->
-
-<a-box
-    position="-5.5 1.35 3.86"
-    width="1.5"
-    height="2.7"
-    depth="0.08"
-    color="#7b5237">
-</a-box>
-
-<a-box
-    position="-5.5 1.35 3.79"
-    width="1.32"
-    height="2.52"
-    depth="0.05"
-    color="#a8784d">
-</a-box>
-
-<!-- Ventana de la puerta -->
-
-<a-box
-    position="-5.5 2.05 3.73"
-    width="0.9"
-    height="0.55"
-    depth="0.03"
-    color="#78b8d0">
-</a-box>
-
-<!-- Manija -->
-
-<a-sphere
-    position="-5.02 1.4 3.70"
-    radius="0.055"
-    color="#f4d58b">
-</a-sphere>
-
-
-<!-- ========================================================= -->
-<!-- PIZARRA -->
-<!-- ========================================================= -->
-
-<a-box
-    position="0 2.8 -7.83"
-    width="5.2"
-    height="1.8"
-    depth="0.13"
-    color="#76563d">
-</a-box>
-
-<a-box
-    position="0 2.8 -7.74"
-    width="4.85"
-    height="1.48"
-    depth="0.05"
-    color="#174d3a">
-</a-box>
-
-
-<!-- Fondo del título -->
-
-<a-plane
-    position="0 3.0 -7.69"
-    width="4.45"
-    height="0.64"
-    color="#0c3528">
-</a-plane>
-
-
-<!-- TÍTULO -->
-
-<a-text
-    value="FERIA DE LOGROS 2026"
-
-    position="0 3.04 -7.60"
-
-    align="center"
-    baseline="center"
-
-    width="5.8"
-
-    color="#ffe45c"
-
-    outlineColor="#0a2118"
-    outlineWidth="0.10"
->
-</a-text>
-
-
-<!-- Subtítulo -->
-
-<a-text
-    value="¡APRENDER • CREAR • COMPARTIR!"
-
-    position="0 2.76 -7.60"
-
-    align="center"
-    baseline="center"
-
-    width="4.9"
-
-    color="#ffffff"
->
-</a-text>
-
-
-<a-text
-    value="MATEMÁTICAS"
-
-    position="-1.75 2.38 -7.67"
-
-    width="3.2"
-
-    color="#ffffff"
->
-</a-text>
-
-
-<!-- ========================================================= -->
-<!-- RELOJ -->
-<!-- ========================================================= -->
-
-<a-cylinder
-    position="3.25 3.72 -7.68"
+ 
+<a-scene id="scene"
+  background="color: #030712"
+  fog="type: linear; color: #071426; near: 12; far: 32"
+  renderer="colorManagement: true; antialias: true"
+  vr-mode-ui="enabled: true"
+  webxr="optionalFeatures: local-floor, bounded-floor, hand-tracking">
+ 
+  <!-- ILUMINACIÓN FUTURISTA -->
+  <a-entity light="type: ambient; color: #9ac9ff; intensity: 0.8"></a-entity>
+  <a-entity light="type: directional; color: #c4f5ff; intensity: 1.2"
+    position="-3 8 4"></a-entity>
+  <a-entity light="type: point; color: #00c8ff; intensity: 1.5; distance: 22"
+    position="0 5 -3"></a-entity>
+  <a-entity light="type: point; color: #7c3aed; intensity: 1; distance: 16"
+    position="-6 3 0"></a-entity>
+  <a-entity light="type: point; color: #00ffca; intensity: .7; distance: 16"
+    position="6 3 -2"></a-entity>
+ 
+  <!-- SALÓN: SUELO, TECHO Y PAREDES -->
+  <a-box position="0 -.16 -2"
+    width="16" height=".3" depth="12"
+    material="color: #071426; metalness: .5; roughness: .35"></a-box>
+ 
+  <a-box position="0 6.55 -2"
+    width="16" height=".18" depth="12"
+    material="color: #091529; metalness: .5; roughness: .4"></a-box>
+ 
+  <a-box position="0 3.25 -8"
+    width="16" height="6.5" depth=".25"
+    color="#0b1b31"
+    material="metalness: .5; roughness: .4"></a-box>
+ 
+  <a-box position="0 3.25 4"
+    width="16" height="6.5" depth=".25"
+    color="#0b1b31"
+    material="metalness: .5; roughness: .4"></a-box>
+ 
+  <a-box position="-8 3.25 -2"
+    width=".25" height="6.5" depth="12"
+    color="#0b1b31"></a-box>
+ 
+  <a-box position="8 3.25 -2"
+    width=".25" height="6.5" depth="12"
+    color="#0b1b31"></a-box>
+ 
+  <a-entity id="floorGrid"></a-entity>
+  <a-entity id="wallAccents"></a-entity>
+  <a-entity id="ceilingLights"></a-entity>
+  <a-entity id="roomDetails"></a-entity>
+ 
+  <!-- CARTEL PRINCIPAL -->
+  <a-box position="0 4.42 -7.79"
+    width="12.55" height="3.28" depth=".18"
+    color="#020b20"
+    material="metalness: .7; roughness: .2;
+    emissive: #061b48; emissiveIntensity: .4"></a-box>
+ 
+  <a-box position="0 4.42 -7.675"
+    width="12.24" height="3.02" depth=".035"
+    color="#06183a"
+    material="emissive: #071d49; emissiveIntensity: .3"></a-box>
+ 
+  <a-text value="FERIA DE LOGROS"
+    position="0 5.52 -7.62" align="center" color="#20eaff" opacity=".35"
+    width="10.4" scale="1.44 1.44 1.44" font="mozillavr"
+    animation="property: scale; from: 1.42 1.42 1.42; to: 1.5 1.5 1.5; dir: alternate; loop: true; dur: 2200; easing: easeInOutSine"></a-text>
+  <a-text value="FERIA DE LOGROS"
+    position="0 5.52 -7.61" align="center" color="#ffffff"
+    width="10.4" scale="1.38 1.38 1.38" font="mozillavr"
+    material="shader: flat; emissive: #ffffff"></a-text>
+ 
+  <a-text value="MATEMATICA 2026"
+    position="0 4.92 -7.62" align="center" color="#12dfff" opacity=".35"
+    width="10.8" scale="1.34 1.34 1.34" font="mozillavr"
+    animation="property: scale; from: 1.32 1.32 1.32; to: 1.4 1.4 1.4; dir: alternate; loop: true; dur: 2200; easing: easeInOutSine"></a-text>
+  <a-text value="MATEMATICA 2026"
+    position="0 4.92 -7.61" align="center" color="#12dfff"
+    width="10.8" scale="1.28 1.28 1.28" font="mozillavr"
+    material="shader: flat; emissive: #12dfff"></a-text>
+ 
+  <a-text value="FIGURAS GEOMETRICAS"
+    position="0 4.2 -7.62" align="center" color="#8b5cf6" opacity=".4"
+    width="9.8" scale="1.24 1.24 1.24" font="mozillavr"></a-text>
+  <a-text value="FIGURAS GEOMETRICAS"
+    position="0 4.2 -7.61" align="center" color="#d8c8ff"
+    width="9.8" scale="1.18 1.18 1.18" font="mozillavr"
+    material="shader: flat; emissive: #d8c8ff"></a-text>
+ 
+  <a-text value="Este espacio fue creado por alumnos"
+    position="0 3.62 -7.61" align="center" color="#e5f4ff"
+    width="10.8" scale=".88 .88 .88"></a-text>
+  <a-text value="de segundo curso de desarrollo de software."
+    position="0 3.28 -7.61" align="center" color="#9fe9ff"
+    width="10.2" scale=".88 .88 .88"></a-text>
+ 
+  <!-- PLATAFORMA CENTRAL -->
+  <a-cylinder position="0 .18 -3"
+    radius="1.03" height=".36"
+    color="#09243a"
+    material="metalness: .7; roughness: .22"></a-cylinder>
+ 
+  <a-cylinder position="0 .38 -3"
+    radius="1.02" height=".035"
+    color="#14cfff"
+    material="emissive: #14cfff; emissiveIntensity: 1.3"></a-cylinder>
+ 
+  <a-cylinder position="0 .44 -3"
+    radius=".94" height=".12"
+    color="#12314a"></a-cylinder>
+ 
+  <a-torus position="0 .52 -3"
     rotation="90 0 0"
-    radius="0.34"
-    height="0.07"
-    color="#f5f5f0">
-</a-cylinder>
-
-<a-cylinder
-    position="3.25 3.72 -7.63"
-    rotation="90 0 0"
-    radius="0.28"
-    height="0.05"
-    color="#25313b">
-</a-cylinder>
-
-<a-box
-    position="3.25 3.84 -7.57"
-    width="0.025"
-    height="0.20"
-    depth="0.025"
-    color="#fff">
-</a-box>
-
-<a-box
-    position="3.34 3.72 -7.57"
-    width="0.18"
-    height="0.025"
-    depth="0.025"
-    color="#fff"
-    rotation="0 0 90">
-</a-box>
-
-
-<!-- ========================================================= -->
-<!-- ESCRITORIO DEL PROFESOR -->
-<!-- ========================================================= -->
-
-<a-box
-    position="0 0.95 -6.2"
-    width="2"
-    height="0.14"
-    depth="0.85"
-    color="#906745">
-</a-box>
-
-<a-box
-    position="-0.8 0.48 -6.2"
-    width="0.09"
-    height="0.8"
-    depth="0.65"
-    color="#8d9698">
-</a-box>
-
-<a-box
-    position="0.8 0.48 -6.2"
-    width="0.09"
-    height="0.8"
-    depth="0.65"
-    color="#8d9698">
-</a-box>
-
-
-<!-- ========================================================= -->
-<!-- LÁMPARAS -->
-<!-- ========================================================= -->
-
-<a-box
-    position="-3 4.65 -2"
-    width="2.5"
-    height="0.1"
-    depth="0.35"
-    color="#fff9d9">
-</a-box>
-
-<a-box
-    position="2.5 4.65 -3"
-    width="2.5"
-    height="0.1"
-    depth="0.35"
-    color="#fff9d9">
-</a-box>
-
-<a-box
-    position="0 4.65 1"
-    width="2.5"
-    height="0.1"
-    depth="0.35"
-    color="#fff9d9">
-</a-box>
-
-
-<!-- ========================================================= -->
-<!-- PUPITRES -->
-<!-- ========================================================= -->
-
-<a-entity id="desks"></a-entity>
-
-
-<!-- ========================================================= -->
-<!-- FIGURA 3D -->
-<!-- ========================================================= -->
-
-<a-entity
-    id="figureRoot"
-    position="0 1.6 -3.5"
->
-
-    <!-- CUBO -->
-
-    <a-box
-        id="cube"
-        class="figureHit"
-
-        width="1.4"
-        height="1.4"
-        depth="1.4"
-
-        color="#299ff2"
-
-        material="
-            roughness:0.28
-        "
-    >
-    </a-box>
-
-
-    <!-- ESFERA -->
-
-    <a-sphere
-        id="sphere"
-        class="figureHit"
-
-        radius="0.82"
-
-        color="#f59e0b"
-
-        visible="false"
-
-        material="
-            roughness:0.25
-        "
-    >
-    </a-sphere>
-
-
-    <!-- CILINDRO -->
-
-    <a-cylinder
-        id="cylinder"
-        class="figureHit"
-
-        radius="0.65"
-        height="1.5"
-
-        color="#22c55e"
-
-        visible="false"
-
-        material="
-            roughness:0.3
-        "
-    >
-    </a-cylinder>
-
-
-    <!-- CONO -->
-
-    <a-cone
-        id="cone"
-        class="figureHit"
-
-        radius-bottom="0.82"
-        radius-top="0"
-        height="1.65"
-
-        color="#d946ef"
-
-        visible="false"
-    >
-    </a-cone>
-
-
-    <!-- PIRÁMIDE -->
-
-    <a-entity
-        id="pyramid"
-        visible="false"
-    >
-
-        <a-cone
-            class="figureHit"
-
-            radius-bottom="0.86"
-            radius-top="0"
-
-            height="1.55"
-
-            segments-radial="4"
-
-            rotation="0 45 0"
-
-            color="#fb7185"
-        >
-        </a-cone>
-
+    radius=".77" radius-tubular=".018"
+    color="#5cecff"
+    material="emissive: #5cecff; emissiveIntensity: 1.2"></a-torus>
+ 
+  <!-- COLUMNAS LATERALES -->
+  <a-box position="-6.9 1.7 -2"
+    width=".55" height="3.1" depth="1.15"
+    color="#0c2038"></a-box>
+ 
+  <a-box position="-6.9 1.7 -2"
+    width=".59" height=".045" depth="1.2"
+    color="#8b5cf6"
+    material="emissive: #8b5cf6; emissiveIntensity: 1"></a-box>
+ 
+  <a-box position="6.9 1.7 -2"
+    width=".55" height="3.1" depth="1.15"
+    color="#0c2038"></a-box>
+ 
+  <a-box position="6.9 1.7 -2"
+    width=".59" height=".045" depth="1.2"
+    color="#00ffd0"
+    material="emissive: #00ffd0; emissiveIntensity: 1"></a-box>
+ 
+  <!-- FIGURAS 3D: SE MUESTRA UNA A LA VEZ -->
+  <a-entity id="figure" position="0 1.65 -3">
+ 
+    <a-box id="cube" class="figure-hit"
+      width="1.25" height="1.25" depth="1.25"
+      color="#32c8ff"
+      material="metalness: .28; roughness: .2;
+      emissive: #087ba8; emissiveIntensity: .25"></a-box>
+ 
+    <a-sphere id="sphere" class="figure-hit"
+      radius=".76" color="#ffb547"
+      material="metalness: .28; roughness: .18;
+      emissive: #9a4d00; emissiveIntensity: .2"
+      visible="false"></a-sphere>
+ 
+    <a-cylinder id="cylinder" class="figure-hit"
+      radius=".62" height="1.42"
+      color="#51f0c0"
+      material="metalness: .24; roughness: .2;
+      emissive: #067d65; emissiveIntensity: .2"
+      visible="false"></a-cylinder>
+ 
+    <a-cone id="cone" class="figure-hit"
+      radius-bottom=".78" radius-top="0" height="1.48"
+      color="#f08cff"
+      material="metalness: .22; roughness: .22;
+      emissive: #8f249f; emissiveIntensity: .2"
+      visible="false"></a-cone>
+ 
+    <a-entity id="pyramid" visible="false">
+      <a-cone class="figure-hit"
+        radius-bottom=".82" radius-top="0" height="1.48"
+        segments-radial="4" rotation="0 45 0"
+        color="#ff6b88"
+        material="metalness: .22; roughness: .22;
+        emissive: #991b43; emissiveIntensity: .2"></a-cone>
     </a-entity>
-
-</a-entity>
-
-
-<!-- ========================================================= -->
-<!-- BOTÓN VOLVER -->
-<!-- ========================================================= -->
-
-<a-entity
-    id="returnWallButton"
-
-    position="7.78 2.0 -1.2"
-
-    rotation="0 -90 0"
-
-    class="fixedVRUI"
->
-
-    <a-plane
-        id="returnButton"
-
-        class="interactable"
-
-        width="1.9"
-        height="0.86"
-
-        color="#1769d2"
-    >
-    </a-plane>
-
-
-    <a-text
-        value="VOLVER"
-
-        position="0 0.10 0.04"
-
-        align="center"
-        baseline="center"
-
-        width="3.4"
-
-        color="#ffffff"
-    >
-    </a-text>
-
-
-    <a-text
-        value="MENÚ PRINCIPAL"
-
-        position="0 -0.20 0.04"
-
-        align="center"
-        baseline="center"
-
-        width="2.55"
-
-        color="#dbeafe"
-    >
-    </a-text>
-
-</a-entity>
-
-
-<!-- ========================================================= -->
-<!-- CÁMARA -->
-<!-- ========================================================= -->
-
-<a-entity
-    id="cameraRig"
-    position="0 0 0"
->
-
-    <a-camera
-        id="camera"
-
-        position="0 1.6 0"
-
-        look-controls="enabled:true"
-
-        wasd-controls="enabled:true"
-    >
+ 
+  </a-entity>
+ 
+  <!-- CÁMARA, MANDOS Y MANOS VR -->
+  <a-entity id="cameraRig" position="0 0 1.25">
+    <a-camera id="playerCamera"
+      position="0 1.6 0"
+      wasd-controls-enabled="false"
+      look-controls="pointerLockEnabled: false">
+      <a-entity cursor="rayOrigin: mouse; fuse: false"
+        raycaster="objects: .figure-hit, .vr-button-hit; far: 12"
+        material="color: #d9fbff; shader: flat"></a-entity>
     </a-camera>
-
-</a-entity>
-
-
-<!-- ========================================================= -->
-<!-- MANDOS META QUEST -->
-<!-- ========================================================= -->
-
-<a-entity
-    id="rightController"
-
-    laser-controls="hand:right"
-
-    raycaster="
-        objects:.figureHit,.interactable;
-        far:12;
-        lineColor:#62d8ff;
-        lineOpacity:0.85
-    "
->
-</a-entity>
-
-
-<a-entity
-    id="leftController"
-
-    laser-controls="hand:left"
-
-    raycaster="
-        objects:.figureHit,.interactable;
-        far:12;
-        lineColor:#62d8ff;
-        lineOpacity:0.85
-    "
->
-</a-entity>
-
-
-<!-- ========================================================= -->
-<!-- SEGUIMIENTO DE MANOS -->
-<!-- ========================================================= -->
-
-<a-entity
-    id="rightHand"
-
-    hand-tracking-controls="
-        hand:right
-    "
->
-</a-entity>
-
-
-<a-entity
-    id="leftHand"
-
-    hand-tracking-controls="
-        hand:left
-    "
->
-</a-entity>
-
-
+ 
+    <!-- MENÚS VR: siguen la mirada del usuario -->
+    <a-entity id="vrPanels" visible="false">
+      <a-entity id="panelFigures" position="-.62 -.78 -.79" rotation="-22 38 0"></a-entity>
+      <a-entity id="panelMotion" position="0 -.78 -.95" rotation="-22 0 0"></a-entity>
+      <a-entity id="panelActions" position=".62 -.78 -.79" rotation="-22 -38 0"></a-entity>
+    </a-entity>
+  </a-entity>
+ 
 </a-scene>
-
-
-<!-- ========================================================= -->
-<!-- INTERFAZ PRINCIPAL -->
-<!-- ========================================================= -->
-
-<div class="ui">
-
-<div class="panel">
-
-<h1>
-📐 Figuras Geométricas VR
-</h1>
-
-<p class="sub">
-
-Explora un salón escolar en realidad virtual,
-aprende las características de las figuras
-y calcula sus áreas.
-
-</p>
-
-
-<!-- BOTONES PRINCIPALES -->
-
-<div class="grid">
-
-<button onclick="showSection('start')">
-Iniciar
-</button>
-
-<button onclick="showSection('calc')">
-Calculadora
-</button>
-
-<button
-    class="secondary"
-    onclick="showSection('info')"
->
-Información
-</button>
-
-<button
-    class="warning"
-    onclick="enterVR()"
->
-VR
-</button>
-
+ 
+<!-- PANEL DE CONTROL -->
+<div id="app">
+  <aside class="panel">
+ 
+    <div class="eyebrow">Experiencia de realidad virtual</div>
+    <h1>GeoLab XR</h1>
+    <p class="small">Laboratorio futurista para aprender geometría en 3D.</p>
+ 
+    <div class="buttons">
+      <button onclick="showSection('start')">Figuras</button>
+      <button onclick="showSection('calc')">Calculadora</button>
+      <button class="secondary" onclick="showSection('info')">Proyecto</button>
+      <button class="secondary" onclick="enterVR()">Entrar a VR</button>
+    </div>
+ 
+    <section id="start">
+      <h2>Elegí una figura</h2>
+ 
+      <div class="buttons">
+        <button data-shape="cube" onclick="selectFigure('cube')">Cubo</button>
+        <button data-shape="sphere" onclick="selectFigure('sphere')">Esfera</button>
+        <button data-shape="cylinder" onclick="selectFigure('cylinder')">Cilindro</button>
+        <button data-shape="cone" onclick="selectFigure('cone')">Cono</button>
+        <button data-shape="pyramid" onclick="selectFigure('pyramid')">Pirámide</button>
+      </div>
+ 
+      <h2 id="figureName">Cubo</h2>
+      <p id="figureDescription">Sólido con seis caras cuadradas iguales.</p>
+      <p id="figureCharacteristics">Caras: 6 · Aristas: 12 · Vértices: 8<br>Área total: A = 6a²</p>
+ 
+      <div class="buttons">
+        <button class="secondary" onclick="moveFigure(-.2,0,0)">Mover ←</button>
+        <button class="secondary" onclick="moveFigure(.2,0,0)">Mover →</button>
+        <button class="secondary" onclick="rotateFigure(-15)">Girar ↶</button>
+        <button class="secondary" onclick="rotateFigure(15)">Girar ↻</button>
+        <button class="secondary" onclick="scaleFigure(.9)">Reducir</button>
+        <button class="secondary" onclick="scaleFigure(1.1)">Aumentar</button>
+        <button class="secondary" onclick="resetFigure()">Centrar figura</button>
+        <button class="secondary" onclick="resetPlayer()">Reubicar usuario</button>
+      </div>
+ 
+      <h2>Movimiento de la figura</h2>
+      <div class="buttons">
+        <button class="secondary" id="dSpin" onclick="runAction('spin')">Auto-giro: NO</button>
+        <button class="secondary" id="dFloat" onclick="runAction('float')">Flotar: NO</button>
+        <button class="secondary" onclick="runAction('faster')">Velocidad +</button>
+        <button class="secondary" onclick="runAction('slower')">Velocidad -</button>
+        <button class="secondary" id="dAxis" onclick="runAction('axis')">Eje: Y</button>
+      </div>
+ 
+      <p class="small"><b>Meta Quest:</b> apunta (o toca la figura con el mando) y presiona el gatillo para agarrarla. Sostenida: joystick derecho ↑↓ la acerca/aleja y ←→ la gira; con las dos manos cambias su tamaño. Joystick izquierdo camina (clic = correr). Joystick derecho: ←→ gira por saltos; mantén ↑, apunta al piso y suelta para teletransportarte. A: auto-giro · B: centrar figura · X: ocultar/mostrar menús · Y: reubicarte · Grip: cambiar figura · clic joystick derecho: giro suave/saltos. Los menús te siguen cuando miras hacia otro lado.</p>
+      <p class="small">Computadora: usa WASD para caminar y Q/E para girar.</p>
+    </section>
+ 
+    <section id="calc" class="hidden">
+      <h2>Calculadora de área total</h2>
+ 
+      <div class="field">
+        <label for="calcFigure">Figura</label>
+        <select id="calcFigure" onchange="renderCalcFields()">
+          <option value="cube">Cubo</option>
+          <option value="sphere">Esfera</option>
+          <option value="cylinder">Cilindro</option>
+          <option value="cone">Cono</option>
+          <option value="pyramid">Pirámide de base cuadrada</option>
+        </select>
+      </div>
+ 
+      <div id="calcFields"></div>
+      <button onclick="calculateArea()">Calcular área</button>
+      <div id="calcResult" class="result hidden"></div>
+      <p><button class="secondary" onclick="showSection('start')">Volver a figuras</button></p>
+    </section>
+ 
+    <section id="info" class="hidden">
+      <h2>Sobre GeoLab XR</h2>
+      <p>Aplicación educativa de geometría en tres dimensiones, creada para la Feria de Logros Matemática 2026.</p>
+      <strong>Integrantes</strong>
+      <ul class="team">
+        <li>Oscar Rafael Melgar Macal</li>
+        <li>Oscar Alejandro Rivas Padilla</li>
+        <li>Adonis Fernando Ortiz Arévalo</li>
+        <li>Cristian Valdemar Alas Melgar</li>
+        <li>Blanca Abigail Erazo Martínez</li>
+        <li>Rosmery Sarai Miranda Salazar</li>
+        <li>Yuditza Maribel Maldonado Tzul</li>
+      </ul>
+      <button class="secondary" onclick="showSection('start')">Volver</button>
+    </section>
+  </aside>
+ 
+  <div id="status">Selecciona una figura para comenzar.</div>
 </div>
-
-
-<!-- ========================================================= -->
-<!-- INICIAR -->
-<!-- ========================================================= -->
-
-<section id="start">
-
-<h2>
-Selecciona una figura
-</h2>
-
-
-<div class="grid">
-
-<button onclick="selectFigure('cube')">
-Cubo
-</button>
-
-<button onclick="selectFigure('sphere')">
-Esfera
-</button>
-
-<button onclick="selectFigure('cylinder')">
-Cilindro
-</button>
-
-<button onclick="selectFigure('cone')">
-Cono
-</button>
-
-<button onclick="selectFigure('pyramid')">
-Pirámide
-</button>
-
-</div>
-
-
-<h2 id="figureName">
-Cubo
-</h2>
-
-
-<p
-    id="figureDescription"
-    class="sub"
->
-Sólido con 6 caras cuadradas iguales.
-</p>
-
-
-<p
-    id="figureCharacteristics"
-    class="sub"
->
-
-Caras: 6 · Aristas: 12 · Vértices: 8
-
-<br>
-
-<span class="formula">
-Área total: A = 6a²
-</span>
-
-</p>
-
-
-<h2>
-Controles
-</h2>
-
-
-<p class="sub">
-
-En la página principal la figura
-<b>NO puede ser agarrada con los mandos</b>.
-
-Solo se modifica mediante estos botones.
-
-</p>
-
-
-<div class="grid">
-
-
-<button
-    class="secondary"
-    onclick="moveFigure(-0.2,0,0)"
->
-Mover ←
-</button>
-
-
-<button
-    class="secondary"
-    onclick="moveFigure(0.2,0,0)"
->
-Mover →
-</button>
-
-
-<button
-    class="secondary"
-    onclick="moveFigure(0,0,-0.2)"
->
-Acercar
-</button>
-
-
-<button
-    class="secondary"
-    onclick="moveFigure(0,0,0.2)"
->
-Alejar
-</button>
-
-
-<button
-    class="secondary"
-    onclick="rotateFigure(-15)"
->
-Girar ↶
-</button>
-
-
-<button
-    class="secondary"
-    onclick="rotateFigure(15)"
->
-Girar ↷
-</button>
-
-
-<button
-    class="secondary"
-    onclick="scaleFigure(0.9)"
->
-Reducir
-</button>
-
-
-<button
-    class="secondary"
-    onclick="scaleFigure(1.1)"
->
-Aumentar
-</button>
-
-
-<button
-    onclick="resetFigure()"
->
-↺ Posición original
-</button>
-
-
-</div>
-
-
-<p class="vr-help">
-
-<b>En VR:</b>
-
-apunta a la figura y mantén el gatillo
-para agarrarla.
-
-Muévete con ella y utiliza el joystick
-para girarla o acercarla/alejarla.
-
-</p>
-
-</section>
-
-
-<!-- ========================================================= -->
-<!-- CALCULADORA -->
-<!-- ========================================================= -->
-
-<section
-    id="calc"
-    class="hidden"
->
-
-<h2>
-🧮 Calculadora de área
-</h2>
-
-
-<label>
-Figura
-</label>
-
-
-<select
-    id="calcFigure"
-    onchange="renderCalcFields()"
->
-
-<option value="cube">
-Cubo
-</option>
-
-<option value="sphere">
-Esfera
-</option>
-
-<option value="cylinder">
-Cilindro
-</option>
-
-<option value="cone">
-Cono
-</option>
-
-<option value="pyramid">
-Pirámide de base cuadrada
-</option>
-
-</select>
-
-
-<div id="calcFields"></div>
-
-
-<button
-    onclick="calculateArea()"
->
-Calcular área
-</button>
-
-
-<div
-    id="calcResult"
-    class="result hidden"
->
-</div>
-
-
-<p>
-
-<button
-    class="secondary"
-    onclick="showSection('start')"
->
-Volver al menú
-</button>
-
-</p>
-
-</section>
-
-
-<!-- ========================================================= -->
-<!-- INFORMACIÓN -->
-<!-- ========================================================= -->
-
-<section
-    id="info"
-    class="hidden"
->
-
-<h2>
-ℹ️ Información
-</h2>
-
-
-<p class="sub">
-
-Esta aplicación educativa permite
-explorar figuras geométricas en 3D
-dentro de un salón virtual.
-
-También permite consultar sus
-características y calcular sus áreas.
-
-</p>
-
-
-<h2>
-Integrantes
-</h2>
-
-
-<ul class="team">
-
-<li>
-Oscar Rafael Melgar Macal
-</li>
-
-<li>
-Oscar Alejandro Rivas Padilla
-</li>
-
-<li>
-Adonis Fernando Ortiz Arévalo
-</li>
-
-<li>
-Cristian Valdemar Alas Melgar
-</li>
-
-<li>
-Blanca Abigail Erazo Martínez
-</li>
-
-<li>
-Rosmery Sarai Miranda Salazar
-</li>
-
-<li>
-Yuditza Maribel Maldonado Tzul
-</li>
-
-</ul>
-
-
-<button
-    class="secondary"
-    onclick="showSection('start')"
->
-Volver
-</button>
-
-</section>
-
-
-</div>
-
-
-<div
-    id="status"
-    class="status"
->
-Selecciona una figura para comenzar.
-</div>
-
-
-</div>
-
-
-<!-- ========================================================= -->
-<!-- JAVASCRIPT -->
-<!-- ========================================================= -->
-
+ 
 <script>
-
-
-const scene =
-document.getElementById('scene');
-
-
-const figureRoot =
-document.getElementById('figureRoot');
-
-
-/* ========================================================= */
-/* POSICIÓN ORIGINAL */
-/* ========================================================= */
-
-const HOME = {
-
-    x:0,
-
-    y:1.6,
-
-    z:-3.5,
-
-    rx:0,
-
-    ry:0,
-
-    rz:0,
-
-    s:1
-
-};
-
-
-let current =
-'cube';
-
-
-let figureScale =
-1;
-
-
-let vrInteractionEnabled =
-false;
-
-
-let grabbedBy =
-null;
-
-
-let grabDistance =
-2.4;
-
-
-/* ========================================================= */
-/* INFORMACIÓN DE FIGURAS */
-/* ========================================================= */
-
-const data = {
-
-
-cube:{
-
-name:'Cubo',
-
-desc:
-'Sólido con 6 caras cuadradas iguales.',
-
-chars:
-'Caras: 6 · Aristas: 12 · Vértices: 8<br>' +
-'<span class="formula">Área total: A = 6a²</span>'
-
-},
-
-
-sphere:{
-
-name:'Esfera',
-
-desc:
-'Sólido redondo cuya superficie está a la misma distancia del centro.',
-
-chars:
-'Superficie curva · Sin aristas ni vértices<br>' +
-'<span class="formula">Área: A = 4πr²</span>'
-
-},
-
-
-cylinder:{
-
-name:'Cilindro',
-
-desc:
-'Sólido con dos bases circulares iguales y una superficie lateral curva.',
-
-chars:
-'2 bases circulares · 2 aristas curvas<br>' +
-'<span class="formula">Área: A = 2πr(r+h)</span>'
-
-},
-
-
-cone:{
-
-name:'Cono',
-
-desc:
-'Sólido con una base circular y un vértice.',
-
-chars:
-'1 base circular · 1 vértice<br>' +
-'<span class="formula">Área: A = πr(r+g)</span>'
-
-},
-
-
-pyramid:{
-
-name:'Pirámide',
-
-desc:
-'Pirámide de base cuadrada formada por una base y cuatro caras triangulares.',
-
-chars:
-'5 caras · 8 aristas · 5 vértices<br>' +
-'<span class="formula">Área: A = a² + 2ag</span>'
-
-}
-
-};
-
-
-/* ========================================================= */
-/* CAMBIO DE APARTADOS */
-/* ========================================================= */
-
-function showSection(id){
-
-    [
-
-        'start',
-
-        'calc',
-
-        'info'
-
-    ].forEach(x=>{
-
-        document
-        .getElementById(x)
-        .classList
-        .toggle(
-            'hidden',
-            x!==id
-        );
-
+  const scene = document.getElementById('scene');
+  const figureRoot = document.getElementById('figure');
+  const rig = document.getElementById('cameraRig');
+  const camera = document.getElementById('playerCamera');
+  const statusEl = document.getElementById('status');
+ 
+  // GENERAR DETALLES FUTURISTAS
+  function makeBox(parent, position, size, color, material = '') {
+    const el = document.createElement('a-box');
+    el.setAttribute('position', position);
+    el.setAttribute('width', size[0]);
+    el.setAttribute('height', size[1]);
+    el.setAttribute('depth', size[2]);
+    el.setAttribute('color', color);
+    if (material) el.setAttribute('material', material);
+    parent.appendChild(el);
+    return el;
+  }
+ 
+  const floorGrid = document.getElementById('floorGrid');
+  const wallAccents = document.getElementById('wallAccents');
+  const ceilingLights = document.getElementById('ceilingLights');
+  const roomDetails = document.getElementById('roomDetails');
+ 
+  for (let x = -7.5; x <= 7.5; x += .75) {
+    makeBox(floorGrid, `${x} .008 -2`,
+      [.012, .012, 11.8], '#0b4260',
+      'emissive: #0b4260; emissiveIntensity: .5');
+  }
+ 
+  for (let z = -7.5; z <= 3.5; z += .75) {
+    makeBox(floorGrid, `0 .009 ${z}`,
+      [15.8, .012, .012], '#0b4260',
+      'emissive: #0b4260; emissiveIntensity: .5');
+  }
+ 
+  for (const y of [.18, 6.25]) {
+    makeBox(wallAccents, `0 ${y} -7.82`,
+      [15.6, .035, .035], '#0bdcff',
+      'emissive: #0bdcff; emissiveIntensity: 1');
+ 
+    makeBox(wallAccents, `0 ${y} 3.82`,
+      [15.6, .035, .035], '#8b5cf6',
+      'emissive: #8b5cf6; emissiveIntensity: 1');
+ 
+    makeBox(wallAccents, `-7.82 ${y} -2`,
+      [.035, .035, 11.6], '#0bdcff',
+      'emissive: #0bdcff; emissiveIntensity: 1');
+ 
+    makeBox(wallAccents, `7.82 ${y} -2`,
+      [.035, .035, 11.6], '#00ffc8',
+      'emissive: #00ffc8; emissiveIntensity: 1');
+  }
+ 
+  for (const x of [-5.7, -2.9, 0, 2.9, 5.7]) {
+    makeBox(ceilingLights, `${x} 6.25 -2`,
+      [1.6, .045, .32], '#d5fbff',
+      'emissive: #8deeff; emissiveIntensity: 1');
+  }
+ 
+  for (const z of [-5.2, -3.8, -2.4, -1, .4, 1.8]) {
+    makeBox(roomDetails, `-7.78 2.5 ${z}`,
+      [.06, 1.25, .055], '#7c3aed',
+      'emissive: #7c3aed; emissiveIntensity: .8');
+ 
+    makeBox(roomDetails, `7.78 2.5 ${z}`,
+      [.06, 1.25, .055], '#00d9ff',
+      'emissive: #00d9ff; emissiveIntensity: .8');
+  }
+ 
+  // DATOS EDUCATIVOS
+  const figureData = {
+    cube: {
+      name: 'Cubo',
+      desc: 'Sólido con seis caras cuadradas iguales.',
+      chars: 'Caras: 6 · Aristas: 12 · Vértices: 8<br>Área total: A = 6a²'
+    },
+    sphere: {
+      name: 'Esfera',
+      desc: 'Todos los puntos de su superficie están a la misma distancia del centro.',
+      chars: 'Superficie curva · Sin aristas ni vértices<br>Área: A = 4πr²'
+    },
+    cylinder: {
+      name: 'Cilindro',
+      desc: 'Tiene dos bases circulares iguales y una superficie lateral curva.',
+      chars: '2 bases circulares · 2 aristas curvas<br>Área: A = 2πr(r + h)'
+    },
+    cone: {
+      name: 'Cono',
+      desc: 'Tiene una base circular y un vértice.',
+      chars: '1 base circular · 1 vértice<br>Área: A = πr(r + g)'
+    },
+    pyramid: {
+      name: 'Pirámide',
+      desc: 'Pirámide de base cuadrada con cuatro caras triangulares.',
+      chars: '5 caras · 8 aristas · 5 vértices<br>Área: A = a² + 2ag'
+    }
+  };
+ 
+  let currentFigure = 'cube';
+  let figureScale = 1;
+  const figureHome = { x: 0, y: 1.65, z: -3 };
+ 
+  function showSection(id) {
+    ['start', 'calc', 'info'].forEach(section => {
+      document.getElementById(section).classList.toggle('hidden', section !== id);
     });
-
-
-    if(id==='calc'){
-
-        document
-        .getElementById('calcFigure')
-        .value=current;
-
-        renderCalcFields();
-
+ 
+    if (id === 'calc') {
+      document.getElementById('calcFigure').value = currentFigure;
+      renderCalcFields();
     }
-
-}
-
-
-/* ========================================================= */
-/* RESTAURAR FIGURA */
-/* ========================================================= */
-
-function resetFigure(){
-
-    figureRoot.setAttribute(
-
-        'position',
-
-        {
-
-            x:HOME.x,
-
-            y:HOME.y,
-
-            z:HOME.z
-
-        }
-
-    );
-
-
-    figureRoot.setAttribute(
-
-        'rotation',
-
-        {
-
-            x:HOME.rx,
-
-            y:HOME.ry,
-
-            z:HOME.rz
-
-        }
-
-    );
-
-
-    figureRoot.setAttribute(
-
-        'scale',
-
-        {
-
-            x:HOME.s,
-
-            y:HOME.s,
-
-            z:HOME.s
-
-        }
-
-    );
-
-
-    figureScale=1;
-
-}
-
-
-/* ========================================================= */
-/* SELECCIONAR FIGURA */
-/* ========================================================= */
-
-function selectFigure(id){
-
-    current=id;
-
-
-    [
-
-        'cube',
-
-        'sphere',
-
-        'cylinder',
-
-        'cone',
-
-        'pyramid'
-
-    ].forEach(k=>{
-
-        document
-        .getElementById(k)
-        .setAttribute(
-            'visible',
-            k===id
-        );
-
+  }
+ 
+  function selectFigure(id) {
+    if (!figureData[id]) return;
+ 
+    currentFigure = id;
+ 
+    ['cube', 'sphere', 'cylinder', 'cone', 'pyramid'].forEach(key => {
+      document.getElementById(key).setAttribute('visible', key === id);
     });
-
-
-    document
-    .getElementById('figureName')
-    .textContent=data[id].name;
-
-
-    document
-    .getElementById('figureDescription')
-    .textContent=data[id].desc;
-
-
-    document
-    .getElementById('figureCharacteristics')
-    .innerHTML=data[id].chars;
-
-
-    resetFigure();
-
-
-    document
-    .getElementById('status')
-    .textContent=
-        data[id].name+
-        ' seleccionada.';
-
-}
-
-
-/* ========================================================= */
-/* MOVER FIGURA DESDE LA PÁGINA */
-/* ========================================================= */
-
-function moveFigure(dx,dy,dz){
-
-    /* Nunca se puede usar estos controles para
-       agarrar la figura mientras estamos en VR. */
-
-    if(scene.is('vr-mode'))
-        return;
-
-
-    const p =
-        figureRoot.getAttribute(
-            'position'
-        );
-
-
-    figureRoot.setAttribute(
-
-        'position',
-
-        {
-
-            x:
-            Math.max(
-                -6.5,
-                Math.min(
-                    6.5,
-                    p.x+dx
-                )
-            ),
-
-            y:
-            Math.max(
-                .7,
-                Math.min(
-                    3.8,
-                    p.y+dy
-                )
-            ),
-
-            z:
-            Math.max(
-                -6.8,
-                Math.min(
-                    2.8,
-                    p.z+dz
-                )
-            )
-
-        }
-
-    );
-
-}
-
-
-/* ========================================================= */
-/* GIRAR FIGURA */
-/* ========================================================= */
-
-function rotateFigure(d){
-
-    if(scene.is('vr-mode'))
-        return;
-
-
-    const r =
-        figureRoot.getAttribute(
-            'rotation'
-        );
-
-
-    figureRoot.setAttribute(
-
-        'rotation',
-
-        {
-
-            x:r.x,
-
-            y:r.y+d,
-
-            z:r.z
-
-        }
-
-    );
-
-}
-
-
-/* ========================================================= */
-/* CAMBIAR TAMAÑO */
-/* ========================================================= */
-
-function scaleFigure(f){
-
-    if(scene.is('vr-mode'))
-        return;
-
-
-    figureScale =
-        Math.max(
-            .45,
-            Math.min(
-                1.8,
-                figureScale*f
-            )
-        );
-
-
-    figureRoot.setAttribute(
-
-        'scale',
-
-        {
-
-            x:figureScale,
-
-            y:figureScale,
-
-            z:figureScale
-
-        }
-
-    );
-
-}
-
-
-/* ========================================================= */
-/* CREAR PUPITRES */
-/* ========================================================= */
-
-function addDesk(x,z){
-
-    const parts=[
-
-        [
-            x,
-            .82,
-            z,
-            1.45,
-            .12,
-            .88,
-            '#96704f'
-        ],
-
-        [
-            x-.55,
-            .42,
-            z-.27,
-            .08,
-            .78,
-            .08,
-            '#8d9698'
-        ],
-
-        [
-            x+.55,
-            .42,
-            z-.27,
-            .08,
-            .78,
-            .08,
-            '#8d9698'
-        ],
-
-        [
-            x-.55,
-            .42,
-            z+.27,
-            .08,
-            .78,
-            .08,
-            '#8d9698'
-        ],
-
-        [
-            x+.55,
-            .42,
-            z+.27,
-            .08,
-            .78,
-            .08,
-            '#8d9698'
-        ],
-
-        [
-            x,
-            .46,
-            z+.72,
-            .75,
-            .09,
-            .55,
-            '#a9825f'
-        ],
-
-        [
-            x-.32,
-            .24,
-            z+.72,
-            .06,
-            .43,
-            .06,
-            '#8d9698'
-        ],
-
-        [
-            x+.32,
-            .24,
-            z+.72,
-            .06,
-            .43,
-            .06,
-            '#8d9698'
-        ]
-
-    ];
-
-
-    parts.forEach(d=>{
-
-        let e =
-            document.createElement(
-                'a-box'
-            );
-
-
-        e.setAttribute(
-            'position',
-            `${d[0]} ${d[1]} ${d[2]}`
-        );
-
-
-        e.setAttribute(
-            'width',
-            d[3]
-        );
-
-
-        e.setAttribute(
-            'height',
-            d[4]
-        );
-
-
-        e.setAttribute(
-            'depth',
-            d[5]
-        );
-
-
-        e.setAttribute(
-            'color',
-            d[6]
-        );
-
-
-        document
-        .getElementById('desks')
-        .appendChild(e);
-
+ 
+    document.getElementById('figureName').textContent = figureData[id].name;
+    document.getElementById('figureDescription').textContent = figureData[id].desc;
+    document.getElementById('figureCharacteristics').innerHTML = figureData[id].chars;
+ 
+    document.querySelectorAll('[data-shape]').forEach(button => {
+      button.classList.toggle('active', button.dataset.shape === id);
     });
-
-}
-
-
-[
-    -5.3,
-    -3.3,
-    -1.3,
-    .7
-
-].forEach(z=>{
-
-    addDesk(-5.3,z);
-
-    addDesk(5.3,z);
-
-});
-
-
-/* ========================================================= */
-/* CALCULADORA */
-/* ========================================================= */
-
-function renderCalcFields(){
-
-    const k =
-        document
-        .getElementById(
-            'calcFigure'
-        )
-        .value;
-
-
-    const i =
-        (id,l)=>
-        `<label>${l}</label>
-        <input
-            id="${id}"
-            type="number"
-            min="0.01"
-            step="any"
-            placeholder="Ej. 3"
-        >`;
-
-
-    let h='';
-
-
-    if(k==='cube')
-        h=i(
-            'side',
-            'Lado (a)'
-        );
-
-
-    if(k==='sphere')
-        h=i(
-            'radius',
-            'Radio (r)'
-        );
-
-
-    if(k==='cylinder')
-
-        h=
-            i(
-                'radius',
-                'Radio (r)'
-            )+
-
-            i(
-                'height',
-                'Altura (h)'
-            );
-
-
-    if(k==='cone')
-
-        h=
-            i(
-                'radius',
-                'Radio (r)'
-            )+
-
-            i(
-                'height',
-                'Altura (h)'
-            );
-
-
-    if(k==='pyramid')
-
-        h=
-            i(
-                'side',
-                'Lado de la base (a)'
-            )+
-
-            i(
-                'apothem',
-                'Apotema lateral (g)'
-            );
-
-
-    document
-    .getElementById(
-        'calcFields'
-    )
-    .innerHTML=h;
-
-
-    document
-    .getElementById(
-        'calcResult'
-    )
-    .classList
-    .add('hidden');
-
-}
-
-
-/* ========================================================= */
-/* OBTENER VALOR */
-/* ========================================================= */
-
-function val(id){
-
-    const n =
-        Number(
-            document
-            .getElementById(id)
-            .value
-        );
-
-
-    return n>0?n:NaN;
-
-}
-
-
-/* ========================================================= */
-/* CALCULAR ÁREA */
-/* ========================================================= */
-
-function calculateArea(){
-
-    const k =
-        document
-        .getElementById(
-            'calcFigure'
-        )
-        .value;
-
-
-    let a;
-
-    let f;
-
-
-    /* CUBO */
-
-    if(k==='cube'){
-
-        let x=val('side');
-
-        a=6*x*x;
-
-        f='A = 6a²';
-
-    }
-
-
-    /* ESFERA */
-
-    else if(k==='sphere'){
-
-        let r=val('radius');
-
-        a=4*Math.PI*r*r;
-
-        f='A = 4πr²';
-
-    }
-
-
-    /* CILINDRO */
-
-    else if(k==='cylinder'){
-
-        let r=val('radius');
-
-        let h=val('height');
-
-        a=
-            2*
-            Math.PI*
-            r*
-            (r+h);
-
-        f='A = 2πr(r+h)';
-
-    }
-
-
-    /* CONO */
-
-    else if(k==='cone'){
-
-        let r=val('radius');
-
-        let h=val('height');
-
-        let g=
-            Math.sqrt(
-                r*r+h*h
-            );
-
-
-        a=
-            Math.PI*
-            r*
-            (r+g);
-
-
-        f=
-            'A = πr(r+g), g = √(r²+h²)';
-
-    }
-
-
-    /* PIRÁMIDE */
-
-    else{
-
-        let s=val('side');
-
-        let g=val('apothem');
-
-
-        a=
-            s*s+
-            2*s*g;
-
-
-        f=
-            'A = a² + 2ag';
-
-    }
-
-
-    const box =
-        document
-        .getElementById(
-            'calcResult'
-        );
-
-
-    box
-    .classList
-    .remove('hidden');
-
-
-    box.textContent =
-
-        Number.isFinite(a)
-
-        ?
-
-        `Área total: ${a.toFixed(2)} unidades² · ${f}`
-
-        :
-
-        'Completa todos los valores con números positivos.';
-
-}
-
-
-/* ========================================================= */
-/* DETECTAR FIGURA CON EL RAYCASTER */
-/* ========================================================= */
-
-function isFigureHit(controller){
-
-    const rc =
-        controller
-        .components
-        .raycaster;
-
-
-    if(!rc)
-        return false;
-
-
-    return (
-
-        rc.intersections || []
-
-    ).some(hit=>{
-
-        let n =
-            hit.object &&
-            hit.object.el;
-
-
-        while(n){
-
-            if(n===figureRoot)
-                return true;
-
-
-            n=n.parentEl;
-
-        }
-
-
-        return false;
-
+ 
+    figureScale = 1;
+    figureRoot.setAttribute('scale', '1 1 1');
+ 
+    statusEl.textContent = `${figureData[id].name} seleccionada.`;
+  }
+ 
+  function moveFigure(dx, dy, dz) {
+    const p = figureRoot.getAttribute('position');
+ 
+    figureRoot.setAttribute('position', {
+      x: Math.max(-5.8, Math.min(5.8, p.x + dx)),
+      y: Math.max(.8, Math.min(3.8, p.y + dy)),
+      z: Math.max(-6.5, Math.min(2.5, p.z + dz))
     });
-
-}
-
-
-/* ========================================================= */
-/* DETECTAR BOTÓN VOLVER */
-/* ========================================================= */
-
-function isReturnHit(controller){
-
-    const rc =
-        controller
-        .components
-        .raycaster;
-
-
-    if(!rc)
-        return false;
-
-
-    return (
-
-        rc.intersections || []
-
-    ).some(hit=>{
-
-        let n =
-            hit.object &&
-            hit.object.el;
-
-
-        while(n){
-
-            if(
-                n.id==='returnButton' ||
-                n.id==='returnWallButton'
-            )
-
-                return true;
-
-
-            n=n.parentEl;
-
-        }
-
-
-        return false;
-
+  }
+ 
+  function rotateFigure(degrees) {
+    const r = figureRoot.getAttribute('rotation');
+    figureRoot.setAttribute('rotation', {
+      x: r.x,
+      y: r.y + degrees,
+      z: r.z
     });
-
-}
-
-
-/* ========================================================= */
-/* VARIABLES PARA MANIPULAR FIGURA EN VR */
-/* ========================================================= */
-
-const dir =
-    new THREE.Vector3();
-
-
-const pos =
-    new THREE.Vector3();
-
-
-/* ========================================================= */
-/* COLOCAR FIGURA DELANTE DEL CONTROL */
-/* ========================================================= */
-
-function placeFigureOnRay(controller){
-
-    controller
-    .object3D
-    .getWorldPosition(pos);
-
-
-    controller
-    .object3D
-    .getWorldDirection(dir);
-
-
-    const p =
-        pos.clone()
-        .addScaledVector(
-            dir,
-            grabDistance
-        );
-
-
-    figureRoot.setAttribute(
-
-        'position',
-
-        {
-
-            x:
-            Math.max(
-                -6.5,
-                Math.min(
-                    6.5,
-                    p.x
-                )
-            ),
-
-            y:
-            Math.max(
-                .7,
-                Math.min(
-                    3.8,
-                    p.y
-                )
-            ),
-
-            z:
-            Math.max(
-                -7.2,
-                Math.min(
-                    3,
-                    p.z
-                )
-            )
-
-        }
-
-    );
-
-}
-
-
-/* ========================================================= */
-/* CONTROLES META QUEST */
-/* ========================================================= */
-
-function setupController(id){
-
-    const c =
-        document.getElementById(id);
-
-
-    /* GATILLO */
-
-    c.addEventListener(
-        'triggerdown',
-        ()=>{
-
-
-            /*
-            MUY IMPORTANTE:
-
-            Fuera de VR los mandos NO pueden
-            agarrar la figura.
-
-            Solo funcionan cuando VR está activo.
-            */
-
-
-            if(
-                !scene.is('vr-mode') ||
-                !vrInteractionEnabled
-            )
-
-                return;
-
-
-            /* VOLVER */
-
-            if(
-                isReturnHit(c)
-            ){
-
-                returnToMain();
-
-                return;
-
-            }
-
-
-            /* FIGURA */
-
-            if(
-                isFigureHit(c)
-            ){
-
-                grabbedBy=c;
-
-                placeFigureOnRay(c);
-
-            }
-
-        }
-    );
-
-
-    /* SOLTAR */
-
-    c.addEventListener(
-        'triggerup',
-        ()=>{
-
-            if(
-                grabbedBy===c
-            )
-
-                grabbedBy=null;
-
-        }
-    );
-
-
-    /* JOYSTICK */
-
-    c.addEventListener(
-        'thumbstickmoved',
-        e=>{
-
-
-            if(
-                !scene.is('vr-mode') ||
-                !vrInteractionEnabled ||
-                grabbedBy!==c
-            )
-
-                return;
-
-
-            const x=
-                e.detail.x || 0;
-
-
-            const y=
-                e.detail.y || 0;
-
-
-            const r=
-                figureRoot
-                .getAttribute(
-                    'rotation'
-                );
-
-
-            /*
-            IZQUIERDA / DERECHA:
-            GIRAR
-            */
-
-            if(
-                Math.abs(x)>.12
-            ){
-
-                figureRoot.setAttribute(
-
-                    'rotation',
-
-                    {
-
-                        x:r.x,
-
-                        y:
-                        r.y-
-                        x*4,
-
-                        z:r.z
-
-                    }
-
-                );
-
-            }
-
-
-            /*
-            ARRIBA / ABAJO:
-            ACERCAR / ALEJAR
-            */
-
-            if(
-                Math.abs(y)>.12
-            ){
-
-                grabDistance=
-                    Math.max(
-                        1,
-                        Math.min(
-                            5,
-                            grabDistance-
-                            y*.12
-                        )
-                    );
-
-            }
-
-
-            placeFigureOnRay(c);
-
-        }
-
-    );
-
-}
-
-
-setupController(
-    'rightController'
-);
-
-
-setupController(
-    'leftController'
-);
-
-
-/* ========================================================= */
-/* ENTRAR A VR */
-/* ========================================================= */
-
-function enterVR(){
-
-    if(
-        scene.enterVR
-    ){
-
-        scene.enterVR();
-
+  }
+ 
+  function scaleFigure(factor) {
+    figureScale = Math.max(.45, Math.min(1.8, figureScale * factor));
+    figureRoot.setAttribute('scale',
+      `${figureScale} ${figureScale} ${figureScale}`);
+  }
+ 
+  function resetFigure() {
+    figureRoot.setAttribute('position', figureHome);
+    figureRoot.setAttribute('rotation', '0 0 0');
+    figureScale = 1;
+    figureRoot.setAttribute('scale', '1 1 1');
+    statusEl.textContent = 'Figura centrada en la plataforma.';
+  }
+ 
+  function resetPlayer() {
+    rig.setAttribute('position', '0 0 1.25');
+    rig.setAttribute('rotation', '0 0 0');
+    camera.setAttribute('rotation', '0 0 0');
+    statusEl.textContent = 'Posición del usuario restablecida.';
+  }
+ 
+  function enterVR() {
+    if (scene.enterVR) {
+      scene.enterVR();
+    } else {
+      statusEl.textContent = 'Usa un navegador compatible con WebXR y HTTPS.';
     }
-
-}
-
-
-/* ========================================================= */
-/* VOLVER AL MENÚ */
-/* ========================================================= */
-
-function returnToMain(){
-
-    /*
-    Soltar figura
-    */
-
-    grabbedBy=null;
-
-
-    /*
-    Desactivar interacción VR
-    */
-
-    vrInteractionEnabled=false;
-
-
-    /*
-    Restaurar distancia
-    */
-
-    grabDistance=2.4;
-
-
-    /*
-    MUY IMPORTANTE:
-
-    La figura vuelve a su lugar original.
-    */
-
-    resetFigure();
-
-
-    /*
-    Mostrar menú principal
-    */
-
-    showSection(
-        'start'
+  }
+ 
+  // CALCULADORA DE ÁREAS
+  function renderCalcFields() {
+    const kind = document.getElementById('calcFigure').value;
+ 
+    const field = (id, label) =>
+      `<div class="field">
+        <label for="${id}">${label}</label>
+        <input id="${id}" type="number" min="0.01" step="any" placeholder="Ej. 3">
+      </div>`;
+ 
+    let html = '';
+ 
+    if (kind === 'cube') html = field('side', 'Lado (a)');
+    if (kind === 'sphere') html = field('radius', 'Radio (r)');
+    if (kind === 'cylinder') {
+      html = field('radius', 'Radio (r)') + field('height', 'Altura (h)');
+    }
+    if (kind === 'cone') {
+      html = field('radius', 'Radio (r)') + field('height', 'Altura (h)');
+    }
+    if (kind === 'pyramid') {
+      html = field('side', 'Lado de la base (a)') +
+             field('apothem', 'Apotema lateral (g)');
+    }
+ 
+    document.getElementById('calcFields').innerHTML = html;
+    document.getElementById('calcResult').classList.add('hidden');
+  }
+ 
+  function getValue(id) {
+    const input = document.getElementById(id);
+    if (!input || input.value.trim() === '') return NaN;
+ 
+    const value = Number(input.value);
+    return value > 0 ? value : NaN;
+  }
+ 
+  function calculateArea() {
+    const kind = document.getElementById('calcFigure').value;
+    let area = NaN;
+    let formula = '';
+ 
+    if (kind === 'cube') {
+      const a = getValue('side');
+      area = 6 * a * a;
+      formula = 'A = 6a²';
+    } else if (kind === 'sphere') {
+      const r = getValue('radius');
+      area = 4 * Math.PI * r * r;
+      formula = 'A = 4πr²';
+    } else if (kind === 'cylinder') {
+      const r = getValue('radius');
+      const h = getValue('height');
+      area = 2 * Math.PI * r * (r + h);
+      formula = 'A = 2πr(r + h)';
+    } else if (kind === 'cone') {
+      const r = getValue('radius');
+      const h = getValue('height');
+      const g = Math.sqrt(r * r + h * h);
+      area = Math.PI * r * (r + g);
+      formula = 'A = πr(r + g), g = √(r² + h²)';
+    } else {
+      const a = getValue('side');
+      const g = getValue('apothem');
+      area = a * a + 2 * a * g;
+      formula = 'A = a² + 2ag';
+    }
+ 
+    const result = document.getElementById('calcResult');
+    result.classList.remove('hidden');
+ 
+    if (!Number.isFinite(area)) {
+      result.textContent = 'Escribe valores positivos en todos los campos.';
+    } else {
+      result.innerHTML =
+        `<strong>Área total:</strong> ${area.toFixed(2)} unidades²<br>${formula}`;
+    }
+  }
+ 
+  // COLISIONES DEL USUARIO CON LAS PAREDES Y LA PLATAFORMA
+  const ROOM = {
+    minX: -7.35,
+    maxX: 7.35,
+    minZ: -7.35,
+    maxZ: 3.35,
+    radius: .28
+  };
+ 
+  const solidBoxes = [
+    { x: 0, z: -3, hx: 1.03, hz: 1.03 }
+  ];
+ 
+  function blockedAt(x, z) {
+    if (x < ROOM.minX || x > ROOM.maxX ||
+        z < ROOM.minZ || z > ROOM.maxZ) {
+      return true;
+    }
+ 
+    return solidBoxes.some(box =>
+      Math.abs(x - box.x) < box.hx + ROOM.radius &&
+      Math.abs(z - box.z) < box.hz + ROOM.radius
     );
-
-
-    document
-    .getElementById(
-        'status'
-    )
-    .textContent=
-        'Menú principal · la figura solo se controla con los botones.';
-
-
-    /*
-    Salir de VR
-    */
-
-    if(
-        scene.is('vr-mode')
-    ){
-
-        scene.exitVR();
-
+  }
+ 
+  function movePlayer(dx, dz) {
+    const p = rig.getAttribute('position');
+    const nx = p.x + dx;
+ 
+    if (!blockedAt(nx, p.z)) {
+      rig.setAttribute('position', { x: nx, y: p.y, z: p.z });
     }
-
-}
-
-
-/* ========================================================= */
-/* BOTÓN VOLVER DE LA PARED */
-/* ========================================================= */
-
-document
-.getElementById(
-    'returnButton'
-)
-.addEventListener(
-    'click',
-    returnToMain
-);
-
-
-/* ========================================================= */
-/* ENTRAR EN VR */
-/* ========================================================= */
-
-scene.addEventListener(
-    'enter-vr',
-    ()=>{
-
-        vrInteractionEnabled=true;
-
-
-        document
-        .getElementById(
-            'status'
-        )
-        .textContent=
-            'VR activo · apunta y mantén el gatillo para agarrar la figura.';
-
+ 
+    const afterX = rig.getAttribute('position');
+    const nz = afterX.z + dz;
+ 
+    if (!blockedAt(afterX.x, nz)) {
+      rig.setAttribute('position', {
+        x: afterX.x,
+        y: afterX.y,
+        z: nz
+      });
     }
-);
-
-
-/* ========================================================= */
-/* SALIR DE VR */
-/* ========================================================= */
-
-scene.addEventListener(
-    'exit-vr',
-    ()=>{
-
-        grabbedBy=null;
-
-
-        vrInteractionEnabled=false;
-
-
-        /*
-        Al salir de VR también
-        regresa la figura a su lugar.
-        */
-
-        resetFigure();
-
-
-        document
-        .getElementById(
-            'status'
-        )
-        .textContent=
-            'Modo normal · usa los botones del panel.';
-
+  }
+ 
+  // CONTROLES VR: MANDOS Y MANOS
+  const vrPanels = document.getElementById('vrPanels');
+ 
+  const forward = new THREE.Vector3();
+  const right = new THREE.Vector3();
+  const xrO = new THREE.Vector3();
+  const xrD = new THREE.Vector3();
+  const xrQ = new THREE.Quaternion();
+  const xrRay = new THREE.Raycaster();
+ 
+  const xrControllers = [];
+ 
+  function findAncestor(entity, className) {
+    let node = entity;
+    while (node) {
+      if (node.classList && node.classList.contains(className)) return node;
+      node = node.parentEl;
     }
-);
-
-
-/* ========================================================= */
-/* COLISIÓN / LÍMITES DEL SALÓN */
-/* ========================================================= */
-
-/*
-   Estos límites mantienen la cámara dentro del aula.
-
-   PARED IZQUIERDA  = X -8
-   PARED DERECHA    = X  8
-   PARED FRONTAL    = Z -8
-   PARED TRASERA    = Z  4
-
-   Se deja un pequeño margen para evitar
-   que la cámara quede dentro de la pared.
-*/
-
-AFRAME.registerComponent(
-    'classroom-boundary',
-    {
-
-        tick:function(){
-
-            const p =
-                this.el
-                .object3D
-                .position;
-
-
-            /*
-            Límite izquierdo
-            */
-
-            p.x=
-                Math.max(
-                    -7.35,
-                    Math.min(
-                        7.35,
-                        p.x
-                    )
-                );
-
-
-            /*
-            Límite frontal / trasero
-            */
-
-            p.z=
-                Math.max(
-                    -7.35,
-                    Math.min(
-                        3.35,
-                        p.z
-                    )
-                );
-
+    return null;
+  }
+ 
+  function isVisible(obj) {
+    while (obj) {
+      if (obj.visible === false) return false;
+      obj = obj.parent;
+    }
+    return true;
+  }
+ 
+  function placeFigure(v) {
+    figureRoot.setAttribute('position', {
+      x: THREE.MathUtils.clamp(v.x, -6.4, 6.4),
+      y: THREE.MathUtils.clamp(v.y, .9, 3.9),
+      z: THREE.MathUtils.clamp(v.z, -6.7, 2.6)
+    });
+  }
+ 
+  function cycleFigure(dir) {
+    const ids = Object.keys(figureData);
+    const i = ids.indexOf(currentFigure);
+    selectFigure(ids[(i + dir + ids.length) % ids.length]);
+  }
+ 
+  // ACCIONES DE LOS BOTONES (3D y panel)
+  function runAction(action) {
+    if (figureData[action]) selectFigure(action);
+    else if (action === 'rotL') rotateFigure(-15);
+    else if (action === 'rotR') rotateFigure(15);
+    else if (action === 'smaller') scaleFigure(.9);
+    else if (action === 'bigger') scaleFigure(1.1);
+    else if (action === 'center') resetFigure();
+    else if (action === 'spin') { motion.spin = !motion.spin; statusEl.textContent = motion.spin ? 'Auto-giro activado.' : 'Auto-giro detenido.'; }
+    else if (action === 'faster') { motion.speed = Math.min(240, motion.speed * 1.4); statusEl.textContent = `Velocidad: ${Math.round(motion.speed)}°/s`; }
+    else if (action === 'slower') { motion.speed = Math.max(8, motion.speed / 1.4); statusEl.textContent = `Velocidad: ${Math.round(motion.speed)}°/s`; }
+    else if (action === 'axis') { motion.axis = motion.axis === 'y' ? 'x' : motion.axis === 'x' ? 'z' : 'y'; statusEl.textContent = 'Eje de giro: ' + motion.axis.toUpperCase(); }
+    else if (action === 'float') { motion.float = !motion.float; statusEl.textContent = motion.float ? 'Flotación activada.' : 'Flotación desactivada.'; }
+    updateLabels();
+  }
+ 
+  function pressButton(btn) {
+    runAction(btn.dataset.action);
+    btn.setAttribute('scale', '1.1 1.1 1.1');
+    setTimeout(() => btn.setAttribute('scale', '1 1 1'), 140);
+  }
+ 
+  // PANELES 3D
+  function buildPanel(parentId, title, titleColor, items) {
+    const parent = document.getElementById(parentId);
+ 
+    const back = document.createElement('a-plane');
+    back.setAttribute('width', '.64');
+    back.setAttribute('height', '1.16');
+    back.setAttribute('position', '0 .04 -.012');
+    back.setAttribute('material', 'color: #04122a; opacity: .88; transparent: true; shader: flat');
+    parent.appendChild(back);
+ 
+    const t = document.createElement('a-text');
+    t.setAttribute('value', title);
+    t.setAttribute('align', 'center');
+    t.setAttribute('color', titleColor);
+    t.setAttribute('width', '1.6');
+    t.setAttribute('position', '0 .5 .005');
+    parent.appendChild(t);
+ 
+    items.forEach(([action, label, color], i) => {
+      const btn = document.createElement('a-entity');
+      btn.classList.add('vr-button');
+      btn.dataset.action = action;
+      btn.setAttribute('position', `0 ${(.3 - i * .17).toFixed(3)} 0`);
+ 
+      const face = document.createElement('a-plane');
+      face.classList.add('vr-button-hit');
+      face.setAttribute('width', '.56');
+      face.setAttribute('height', '.14');
+      face.setAttribute('material',
+        `color: #0b2942; emissive: ${color}; emissiveIntensity: .45`);
+      btn.appendChild(face);
+ 
+      const txt = document.createElement('a-text');
+      txt.setAttribute('value', label);
+      txt.setAttribute('align', 'center');
+      txt.setAttribute('color', '#effbff');
+      txt.setAttribute('width', '1.5');
+      txt.setAttribute('position', '0 0 .01');
+      btn.appendChild(txt);
+ 
+      parent.appendChild(btn);
+    });
+  }
+ 
+  buildPanel('panelFigures', 'FIGURAS', '#5cecff', [
+    ['cube', 'CUBO', '#16bff4'],
+    ['sphere', 'ESFERA', '#ffb547'],
+    ['cylinder', 'CILINDRO', '#51f0c0'],
+    ['cone', 'CONO', '#e879f9'],
+    ['pyramid', 'PIRAMIDE', '#fb7185']
+  ]);
+ 
+  buildPanel('panelActions', 'ACCIONES', '#c4b5fd', [
+    ['rotL', 'GIRAR <', '#38bdf8'],
+    ['rotR', 'GIRAR >', '#38bdf8'],
+    ['smaller', 'REDUCIR', '#fbbf24'],
+    ['bigger', 'AUMENTAR', '#fbbf24'],
+    ['center', 'CENTRAR', '#a78bfa']
+  ]);
+ 
+  buildPanel('panelMotion', 'MOVIMIENTO', '#86efac', [
+    ['spin', 'GIRO: NO', '#34d399'],
+    ['faster', 'VELOC. +', '#34d399'],
+    ['slower', 'VELOC. -', '#34d399'],
+    ['axis', 'EJE: Y', '#38bdf8'],
+    ['float', 'FLOTAR: NO', '#fbbf24']
+  ]);
+ 
+  // ESTADO DEL MOVIMIENTO AUTOMATICO
+  const motion = { spin: false, speed: 45, axis: 'y', float: false, fo: 0, snap: true };
+ 
+  function setLabel(action, text) {
+    const t = document.querySelector(`#panelMotion .vr-button[data-action="${action}"] a-text`);
+    if (t) t.setAttribute('value', text);
+  }
+ 
+  function updateLabels() {
+    const g = motion.spin ? 'SI' : 'NO', f = motion.float ? 'SI' : 'NO';
+    setLabel('spin', 'GIRO: ' + g);
+    setLabel('axis', 'EJE: ' + motion.axis.toUpperCase());
+    setLabel('float', 'FLOTAR: ' + f);
+    const set = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
+    set('dSpin', 'Auto-giro: ' + g);
+    set('dAxis', 'Eje: ' + motion.axis.toUpperCase());
+    set('dFloat', 'Flotar: ' + f);
+  }
+ 
+  // RAYO DE UN MANDO O MANO (coordenadas del mundo)
+  function rayOf(st) {
+    st.c.getWorldPosition(xrO);
+    st.c.getWorldQuaternion(xrQ);
+    xrD.set(0, 0, -1).applyQuaternion(xrQ);
+  }
+ 
+  function xrTargets() {
+    const list = [];
+    figureRoot.object3D.traverse(o => {
+      if (o.isMesh && isVisible(o)) list.push(o);
+    });
+    document.querySelectorAll('.vr-button-hit').forEach(el => {
+      const m = el.getObject3D('mesh');
+      if (m && isVisible(m)) list.push(m);
+    });
+    return list;
+  }
+ 
+  // Qué apunta el rayo: botón, figura o piso
+  function pickFor(st) {
+    rayOf(st);
+    xrRay.set(xrO, xrD);
+    xrRay.far = 15;
+ 
+    let best = null;
+    const hits = xrRay.intersectObjects(xrTargets(), false);
+ 
+    if (hits.length) {
+      const el = hits[0].object.el;
+      const btn = findAncestor(el, 'vr-button');
+      best = btn
+        ? { type: 'button', btn, distance: hits[0].distance }
+        : { type: 'figure', distance: hits[0].distance };
+    }
+ 
+    if (xrD.y < -.02) {
+      const t = -xrO.y / xrD.y;
+      if (t > 0 && t < 12 && (!best || t < best.distance)) {
+        const p = xrO.clone().addScaledVector(xrD, t);
+        if (Math.abs(p.x) < ROOM.maxX && p.z > ROOM.minZ && p.z < ROOM.maxZ) {
+          best = { type: 'floor', point: p, distance: t };
         }
-
+      }
     }
-);
-
-
-/*
-Asignar el límite a la cámara.
-*/
-
-document
-.getElementById(
-    'camera'
-)
-.setAttribute(
-    'classroom-boundary',
-    ''
-);
-
-
-/* ========================================================= */
-/* INICIO */
-/* ========================================================= */
-
-selectFigure(
-    'cube'
-);
-
-
-showSection(
-    'start'
-);
-
+ 
+    return best;
+  }
+ 
+  function teleportTo(point) {
+    camera.object3D.getWorldPosition(xrO);
+    const p = rig.object3D.position;
+    const nx = p.x + (point.x - xrO.x);
+    const nz = p.z + (point.z - xrO.z);
+ 
+    if (blockedAt(nx, nz)) {
+      statusEl.textContent = 'No puedes ir a ese lugar.';
+      return;
+    }
+ 
+    rig.setAttribute('position', { x: nx, y: p.y, z: nz });
+  }
+ 
+  // ---------- UTILIDADES NUEVAS ----------
+  const UP = new THREE.Vector3(0, 1, 0);
+  const AXES = { x: new THREE.Vector3(1, 0, 0), y: UP, z: new THREE.Vector3(0, 0, 1) };
+  const tV = new THREE.Vector3(), tV2 = new THREE.Vector3();
+  const tQ = new THREE.Quaternion(), tQ2 = new THREE.Quaternion();
+  const tE = new THREE.Euler();
+  const D2R = THREE.MathUtils.degToRad, R2D = THREE.MathUtils.radToDeg;
+  const say = t => { statusEl.textContent = t; };
+ 
+  let twoHand = null, aiming = false, tpPoint = null, snapReady = true;
+ 
+  function setFigureQuat(q) {
+    tE.setFromQuaternion(q, 'XYZ');
+    figureRoot.setAttribute('rotation', { x: R2D(tE.x), y: R2D(tE.y), z: R2D(tE.z) });
+  }
+ 
+  // gira al usuario alrededor de su cabeza
+  function turnRig(angle) {
+    camera.object3D.getWorldPosition(tV);
+    const ry = rig.object3D.rotation.y + angle;
+    rig.setAttribute('rotation', { x: 0, y: R2D(ry), z: 0 });
+    rig.object3D.updateMatrixWorld(true);
+    camera.object3D.getWorldPosition(tV2);
+    const p = rig.object3D.position;
+    rig.setAttribute('position', { x: p.x + tV.x - tV2.x, y: p.y, z: p.z + tV.z - tV2.z });
+  }
+ 
+  const isHeld = () => xrControllers.some(s => s.connected && s.grab);
+ 
+  // Rotación mejorada (eje Y del mundo) y centrado
+  rotateFigure = function (deg) {
+    tQ.copy(figureRoot.object3D.quaternion);
+    tQ2.setFromAxisAngle(UP, D2R(deg));
+    setFigureQuat(tQ.premultiply(tQ2));
+  };
+ 
+  resetFigure = function () {
+    figureRoot.setAttribute('position', figureHome);
+    figureRoot.setAttribute('rotation', '0 0 0');
+    figureScale = 1;
+    figureRoot.setAttribute('scale', '1 1 1');
+    motion.fo = 0;
+    say('Figura centrada en la plataforma.');
+  };
+ 
+  // ---------- AGARRAR LA FIGURA ----------
+  function startGrab(st) {
+    const fig = figureRoot.object3D;
+    fig.getWorldPosition(tV);
+    const off = st.c.worldToLocal(tV.clone());
+    st.c.getWorldQuaternion(tQ);
+    fig.getWorldQuaternion(tQ2);
+    st.grab = { off, rel: tQ.clone().invert().multiply(tQ2), spin: 0 };
+    say('Figura agarrada. Joystick derecho: ↑↓ acerca/aleja, ←→ gira. Dos manos: tamaño.');
+  }
+ 
+  function onSelectStart(st) {
+    if (st.grab) return;
+ 
+    // agarre por cercanía: tocar la figura con el mando
+    st.c.getWorldPosition(tV);
+    figureRoot.object3D.getWorldPosition(tV2);
+    if (tV.distanceTo(tV2) < .3 + .5 * figureScale) { startGrab(st); return; }
+ 
+    const best = pickFor(st);
+    if (!best) return;
+ 
+    if (best.type === 'button') pressButton(best.btn);
+    else if (best.type === 'figure') startGrab(st);
+    else if (best.type === 'floor' && st.isHand) teleportTo(best.point); // manos: pellizcar el piso
+  }
+ 
+  function onSelectEnd(st) {
+    if (st.grab) {
+      st.grab = null;
+      twoHand = null;
+      say(`${figureData[currentFigure].name} colocada.`);
+    }
+  }
+ 
+  // CREAR MANDOS / MANOS
+  function setupXRController(i, xr) {
+    const c = xr.getController(i);
+    const grip = xr.getControllerGrip(i);
+    const hand = xr.getHand(i);
+ 
+    rig.object3D.add(c);
+    rig.object3D.add(grip);
+    rig.object3D.add(hand);
+ 
+    const line = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -3)
+      ]),
+      new THREE.LineBasicMaterial({ color: 0x5cecff })
+    );
+    line.visible = false;
+    c.add(line);
+ 
+    const dot = new THREE.Mesh(
+      new THREE.SphereGeometry(.025, 12, 12),
+      new THREE.MeshBasicMaterial({ color: 0x5cecff })
+    );
+    dot.visible = false;
+    scene.object3D.add(dot);
+ 
+    grip.add(new THREE.Mesh(
+      new THREE.BoxGeometry(.045, .045, .13),
+      new THREE.MeshBasicMaterial({ color: 0x9ad9ff })
+    ));
+ 
+    const st = {
+      c, hand, line, dot,
+      connected: false, isHand: false,
+      handedness: i === 0 ? 'left' : 'right',
+      gamepad: null, grab: null, prev: {}
+    };
+ 
+    c.addEventListener('connected', event => {
+      const d = event.data || {};
+      st.connected = true;
+      st.handedness = d.handedness || st.handedness;
+      st.gamepad = d.gamepad || null;
+      st.isHand = !!d.hand;
+ 
+      const color = st.handedness === 'left' ? 0x5cecff : 0xa78bfa;
+      line.material.color.setHex(color);
+      dot.material.color.setHex(color);
+      line.visible = true;
+ 
+      statusEl.textContent =
+        `${st.isHand ? 'Mano' : 'Mando'} ${st.handedness === 'left' ? 'izquierdo' : 'derecho'} detectado.`;
+    });
+ 
+    c.addEventListener('disconnected', () => {
+      st.connected = false;
+      st.gamepad = null;
+      st.grab = null;
+      line.visible = false;
+      dot.visible = false;
+    });
+ 
+    c.addEventListener('selectstart', () => onSelectStart(st));
+    c.addEventListener('selectend', () => onSelectEnd(st));
+    c.addEventListener('squeezestart', () => cycleFigure(st.handedness === 'left' ? -1 : 1));
+ 
+    xrControllers.push(st);
+  }
+ 
+  function initXR() {
+    const xr = scene.renderer && scene.renderer.xr;
+    if (!xr) return;
+    setupXRController(0, xr);
+    setupXRController(1, xr);
+  }
+ 
+  if (scene.hasLoaded) initXR();
+  else scene.addEventListener('loaded', initXR, { once: true });
+ 
+  // Esferas en las articulaciones cuando se usan las manos
+  const jointGeo = new THREE.SphereGeometry(1, 8, 8);
+ 
+  function decorateHand(st) {
+    const joints = st.hand.joints || {};
+    for (const name in joints) {
+      const j = joints[name];
+      if (j.userData.dot) continue;
+      j.userData.dot = true;
+      const m = new THREE.Mesh(jointGeo,
+        new THREE.MeshBasicMaterial({ color: st.handedness === 'left' ? 0x5cecff : 0xa78bfa }));
+      m.scale.setScalar(j.jointRadius || .01);
+      j.add(m);
+    }
+  }
+ 
+  // ---------- MENÚS QUE SIGUEN LA MIRADA ----------
+  const panelPos = new THREE.Vector3();
+  let panelYaw = 0, panelInit = false, panelFollow = false;
+ 
+  function updatePanels(dt) {
+    if (!vrPanels.object3D.visible) return;
+    camera.object3D.getWorldPosition(tV);
+    camera.object3D.getWorldDirection(tV2);
+ 
+    if (!panelInit || panelPos.distanceTo(tV) > 3) {
+      panelPos.copy(tV);
+      panelYaw = Math.atan2(-tV2.x, -tV2.z);
+      panelInit = true;
+    }
+ 
+    if (tV2.x * tV2.x + tV2.z * tV2.z > .01) {
+      const yaw = Math.atan2(-tV2.x, -tV2.z);
+      let d = yaw - panelYaw;
+      d = Math.atan2(Math.sin(d), Math.cos(d));
+      if (Math.abs(d) > .85) panelFollow = true;   // seguir solo si miras muy lejos
+      if (Math.abs(d) < .1) panelFollow = false;
+      if (panelFollow) panelYaw += d * (1 - Math.exp(-dt * 5));
+    }
+ 
+    panelPos.lerp(tV, 1 - Math.exp(-dt * 8));
+    rig.object3D.worldToLocal(tV2.copy(panelPos));
+    vrPanels.object3D.position.copy(tV2);
+    vrPanels.object3D.rotation.set(0, panelYaw - rig.object3D.rotation.y, 0);
+  }
+ 
+  // Marcador de teletransporte
+  const marker = new THREE.Mesh(
+    new THREE.RingGeometry(.18, .26, 32).rotateX(-Math.PI / 2),
+    new THREE.MeshBasicMaterial({ color: 0x5cecff, side: THREE.DoubleSide })
+  );
+  marker.visible = false;
+  scene.object3D.add(marker);
+ 
+  // detecta el momento en que se presiona un botón físico
+  function edge(st, i) {
+    const b = st.gamepad && st.gamepad.buttons && st.gamepad.buttons[i];
+    const now = !!(b && b.pressed), was = !!st.prev[i];
+    st.prev[i] = now;
+    return now && !was;
+  }
+ 
+  // ---------- ACTUALIZACIÓN VR (cada cuadro) ----------
+  function xrUpdate(dt) {
+    const mv = { x: 0, y: 0 }, tr = { x: 0, y: 0 };
+    let rightSt = null, run = false;
+ 
+    for (const st of xrControllers) {
+      if (!st.connected) { st.grab = null; continue; }
+      if (st.isHand) decorateHand(st);
+ 
+      const g = st.gamepad;
+      if (!g || !g.axes) continue;
+ 
+      const ax = g.axes;
+      let x = ax.length >= 4 ? ax[2] : ax[0];
+      let y = ax.length >= 4 ? ax[3] : ax[1];
+      if (Math.abs(x) < .15) x = 0;
+      if (Math.abs(y) < .15) y = 0;
+ 
+      if (st.handedness === 'left') {
+        mv.x = x; mv.y = y;
+        run = !!(g.buttons[3] && g.buttons[3].pressed);            // clic izquierdo = correr
+        if (edge(st, 4)) { vrPanels.setAttribute('visible', !vrPanels.object3D.visible); panelInit = false; } // X
+        if (edge(st, 5)) resetPlayer();                                                                         // Y
+      } else {
+        tr.x = x; tr.y = y; rightSt = st;
+        if (edge(st, 4)) runAction('spin');                                                                     // A
+        if (edge(st, 5)) resetFigure();                                                                         // B
+        if (edge(st, 3)) { motion.snap = !motion.snap; say(motion.snap ? 'Giro por saltos.' : 'Giro suave.'); } // clic derecho
+      }
+    }
+ 
+    // caminar (joystick izquierdo)
+    if (mv.x || mv.y) {
+      camera.object3D.getWorldDirection(forward);
+      forward.y = 0;
+      if (forward.lengthSq() > 0) forward.normalize();
+      right.set(-forward.z, 0, forward.x).normalize();
+ 
+      const sp = (run ? 4.2 : 2.4) * dt, fa = -mv.y;
+      movePlayer(
+        (right.x * mv.x + forward.x * fa) * sp,
+        (right.z * mv.x + forward.z * fa) * sp
+      );
+    }
+ 
+    const holders = xrControllers.filter(s => s.connected && s.grab);
+ 
+    if (holders.length) {
+      aiming = false;
+      marker.visible = false;
+ 
+      const h = holders[0], gr = h.grab;
+ 
+      // joystick derecho: acercar/alejar y girar la figura agarrada
+      if (tr.y) gr.off.z = THREE.MathUtils.clamp(gr.off.z + tr.y * 1.6 * dt, -5, 1);
+      if (tr.x) gr.spin -= tr.x * 2.2 * dt;
+ 
+      placeFigure(h.c.localToWorld(gr.off.clone()));
+      h.c.getWorldQuaternion(tQ);
+      tQ.multiply(gr.rel);
+      tQ2.setFromAxisAngle(UP, gr.spin);
+      setFigureQuat(tQ.premultiply(tQ2));
+ 
+      // dos manos: escalar
+      if (holders.length >= 2) {
+        const d = holders[0].c.getWorldPosition(tV).distanceTo(holders[1].c.getWorldPosition(tV2));
+        if (!twoHand) twoHand = { d, s: figureScale };
+        figureScale = THREE.MathUtils.clamp(twoHand.s * d / twoHand.d, .45, 1.8);
+        figureRoot.setAttribute('scale', `${figureScale} ${figureScale} ${figureScale}`);
+      } else {
+        twoHand = null;
+      }
+    } else if (rightSt) {
+      // teletransporte: mantener joystick derecho adelante, apuntar al piso y soltar
+      if (tr.y < -.7) {
+        aiming = true;
+        const p = pickFor(rightSt);
+        tpPoint = p && p.type === 'floor' ? p.point : null;
+        marker.visible = !!tpPoint;
+        if (tpPoint) marker.position.set(tpPoint.x, .03, tpPoint.z);
+      } else if (aiming && tr.y > -.5) {
+        aiming = false;
+        marker.visible = false;
+        if (tpPoint) { teleportTo(tpPoint); panelInit = false; }
+      }
+ 
+      // giro: por saltos de 30° o suave
+      if (!aiming && tr.y > -.5) {
+        if (motion.snap) {
+          if (Math.abs(tr.x) > .7) {
+            if (snapReady) { turnRig(-Math.sign(tr.x) * Math.PI / 6); snapReady = false; }
+          } else if (Math.abs(tr.x) < .3) {
+            snapReady = true;
+          }
+        } else if (tr.x) {
+          turnRig(-tr.x * 1.7 * dt);
+        }
+      }
+    }
+ 
+    // rayos y puntos de mira
+    for (const st of xrControllers) {
+      if (!st.connected) continue;
+ 
+      const pick = pickFor(st);
+      let len = 3;
+ 
+      if (st.grab) len = THREE.MathUtils.clamp(Math.abs(st.grab.off.z), .3, 6);
+      else if (pick) len = Math.min(pick.distance, 8);
+ 
+      const pos = st.line.geometry.attributes.position;
+      pos.setZ(1, -len);
+      pos.needsUpdate = true;
+      st.line.visible = true;
+ 
+      st.line.material.color.setHex(
+        st.grab ? 0xffd54a :
+        pick && pick.type === 'button' ? 0xffffff :
+        st.handedness === 'left' ? 0x5cecff : 0xa78bfa);
+ 
+      st.dot.position.copy(xrO).addScaledVector(xrD, len);
+      st.dot.material.color.copy(st.line.material.color);
+      st.dot.visible = !!pick || !!st.grab;
+    }
+ 
+    updatePanels(dt);
+  }
+ 
+  // TECLADO (ESCRITORIO)
+  const keys = new Set();
+ 
+  window.addEventListener('keydown', event => {
+    keys.add(event.key.toLowerCase());
+  });
+ 
+  window.addEventListener('keyup', event => {
+    keys.delete(event.key.toLowerCase());
+  });
+ 
+  scene.addEventListener('enter-vr', () => {
+    vrPanels.setAttribute('visible', true);
+    panelInit = false;
+    statusEl.textContent =
+      'VR activa: gatillo agarra la figura o pulsa botones. Joystick izquierdo camina, derecho gira.';
+  });
+ 
+  scene.addEventListener('exit-vr', () => {
+    vrPanels.setAttribute('visible', false);
+    xrControllers.forEach(st => { st.grab = null; st.dot.visible = false; });
+    twoHand = null;
+    aiming = false;
+    marker.visible = false;
+    statusEl.textContent = 'Modo normal: usa WASD para moverte.';
+  });
+ 
+  function updateControls(dt) {
+    if (scene.is('vr-mode')) {
+      xrUpdate(dt);
+      return;
+    }
+ 
+    const f =
+      (keys.has('w') || keys.has('arrowup') ? 1 : 0) -
+      (keys.has('s') || keys.has('arrowdown') ? 1 : 0);
+ 
+    const sx =
+      (keys.has('d') ? 1 : 0) -
+      (keys.has('a') ? 1 : 0);
+ 
+    if (f || sx) {
+      camera.object3D.getWorldDirection(forward);
+      forward.y = 0;
+      if (forward.lengthSq() > 0) forward.normalize();
+      right.set(-forward.z, 0, forward.x).normalize();
+ 
+      movePlayer(
+        (right.x * sx + forward.x * f) * 2.4 * dt,
+        (right.z * sx + forward.z * f) * 2.4 * dt
+      );
+    }
+ 
+    const turn =
+      (keys.has('e') ? 1 : 0) -
+      (keys.has('q') ? 1 : 0);
+ 
+    if (turn) {
+      const r = rig.getAttribute('rotation');
+      rig.setAttribute('rotation', {
+        x: r.x,
+        y: r.y + turn * 1.4 * dt * 60,
+        z: r.z
+      });
+    }
+  }
+ 
+  // Bucle (el tick de A-Frame sí funciona dentro de las gafas) + movimiento automático de la figura
+  AFRAME.registerComponent('geolab-loop', {
+    tick(time, delta) {
+      const dt = Math.min(delta / 1000, .05);
+      updateControls(dt);
+ 
+      const held = isHeld();
+ 
+      if (motion.spin && !held) {
+        tQ.copy(figureRoot.object3D.quaternion);
+        tQ2.setFromAxisAngle(AXES[motion.axis], D2R(motion.speed) * dt);
+        setFigureQuat(tQ.premultiply(tQ2));
+      }
+ 
+      const target = motion.float ? Math.sin(time / 650) * .12 : 0;
+      if (held) {
+        motion.fo = target;
+      } else if (motion.fo !== target) {
+        const p = figureRoot.object3D.position;
+        figureRoot.setAttribute('position', { x: p.x, y: p.y + target - motion.fo, z: p.z });
+        motion.fo = target;
+      }
+    }
+  });
+  scene.setAttribute('geolab-loop', '');
+ 
+  // SELECCIÓN CON RATÓN
+  scene.addEventListener('click', event => {
+    const button = findAncestor(event.target, 'vr-button');
+    if (button) pressButton(button);
+  });
+ 
+  // INICIAR
+  selectFigure('cube');
+  renderCalcFields();
+  showSection('start');
+  updateLabels();
 </script>
-
+ 
 </body>
 </html>
