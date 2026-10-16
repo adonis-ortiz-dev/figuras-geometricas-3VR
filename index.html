@@ -21,6 +21,8 @@
     p { color: #c6d9ea; line-height: 1.45; }
     .small { font-size: .82rem; color: #9cb7cf; }
     .eyebrow { color: #55e6ff; text-transform: uppercase; letter-spacing: .12em; font-size: .7rem; font-weight: bold; }
+    .head { display: flex; align-items: center; gap: 10px; }
+    .head img { height: 52px; background: #fff; border-radius: 8px; padding: 2px; }
     .buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
     button {
       padding: 10px; border: 1px solid #56dfff77; border-radius: 9px;
@@ -29,10 +31,16 @@
     button:hover { filter: brightness(1.2); }
     button.secondary { background: #12243a; }
     button.active { background: #087f8c; border-color: #67ffe0; }
+    button.wide { width: 100%; }
     .hidden { display: none !important; }
     .field { display: grid; gap: 5px; margin: 10px 0; }
-    input, select { width: 100%; padding: 10px; border: 1px solid #45617c; border-radius: 8px; background: #071426; color: white; }
+    input { width: 100%; padding: 10px; border: 1px solid #45617c; border-radius: 8px; background: #071426; color: white; }
+    input[type=range] { padding: 0; }
     .result { margin-top: 10px; padding: 11px; background: #062a36; border: 1px solid #1ac6bd55; border-radius: 10px; line-height: 1.5; }
+    .calc { margin-top: 12px; padding: 12px; border: 1px solid #45d9ff88; border-radius: 14px; background: #02101c; box-shadow: inset 0 0 20px #00c8ff22; }
+    .lcd { font-family: monospace; background: #031c17; color: #5dffb0; padding: 10px; border-radius: 8px; min-height: 96px; white-space: pre; font-size: .8rem; line-height: 1.55; overflow-x: auto; border: 1px solid #1ac6bd77; }
+    .keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
+    .keys button { padding: 11px 0; }
     #status {
       position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
       max-width: calc(100vw - 25px); padding: 10px 14px; border: 1px solid #43d9ff55;
@@ -54,7 +62,11 @@
   vr-mode-ui="enabled: true"
   webxr="optionalFeatures: local-floor, bounded-floor, hand-tracking">
 
-  <!-- ILUMINACIÓN FUTURISTA -->
+  <a-assets>
+    <img id="logo" src="logo.jpg">
+  </a-assets>
+
+  <!-- ILUMINACIÓN -->
   <a-entity light="type: ambient; color: #9ac9ff; intensity: 0.8"></a-entity>
   <a-entity light="type: directional; color: #c4f5ff; intensity: 1.2" position="-3 8 4"></a-entity>
   <a-entity light="type: point; color: #00c8ff; intensity: 1.5; distance: 22" position="0 5 -3"></a-entity>
@@ -62,14 +74,10 @@
   <a-entity light="type: point; color: #00ffca; intensity: .7; distance: 16" position="6 3 -2"></a-entity>
 
   <!-- SALÓN -->
-  <a-box position="0 -.16 -2" width="16" height=".3" depth="12"
-    material="color: #071426; metalness: .5; roughness: .35"></a-box>
-  <a-box position="0 6.55 -2" width="16" height=".18" depth="12"
-    material="color: #091529; metalness: .5; roughness: .4"></a-box>
-  <a-box position="0 3.25 -8" width="16" height="6.5" depth=".25" color="#0b1b31"
-    material="metalness: .5; roughness: .4"></a-box>
-  <a-box position="0 3.25 4" width="16" height="6.5" depth=".25" color="#0b1b31"
-    material="metalness: .5; roughness: .4"></a-box>
+  <a-box position="0 -.16 -2" width="16" height=".3" depth="12" material="color: #071426; metalness: .5; roughness: .35"></a-box>
+  <a-box position="0 6.55 -2" width="16" height=".18" depth="12" material="color: #091529; metalness: .5; roughness: .4"></a-box>
+  <a-box position="0 3.25 -8" width="16" height="6.5" depth=".25" color="#0b1b31" material="metalness: .5; roughness: .4"></a-box>
+  <a-box position="0 3.25 4" width="16" height="6.5" depth=".25" color="#0b1b31" material="metalness: .5; roughness: .4"></a-box>
   <a-box position="-8 3.25 -2" width=".25" height="6.5" depth="12" color="#0b1b31"></a-box>
   <a-box position="8 3.25 -2" width=".25" height="6.5" depth="12" color="#0b1b31"></a-box>
 
@@ -79,77 +87,111 @@
   <a-entity id="roomDetails"></a-entity>
 
   <!-- CARTEL PRINCIPAL -->
-  <a-box position="0 4.42 -7.79" width="12.55" height="3.28" depth=".18" color="#020b20"
+  <a-box position="0 3.85 -7.79" width="12.55" height="4.7" depth=".18" color="#020b20"
     material="metalness: .7; roughness: .2; emissive: #061b48; emissiveIntensity: .4"></a-box>
-  <a-box position="0 4.42 -7.675" width="12.24" height="3.02" depth=".035" color="#06183a"
+  <a-box position="0 3.85 -7.675" width="12.24" height="4.45" depth=".035" color="#06183a"
     material="emissive: #071d49; emissiveIntensity: .3"></a-box>
 
-  <a-text value="FERIA DE LOGROS" position="0 5.52 -7.62" align="center" color="#20eaff" opacity=".35"
+  <!-- LOGO DEL INSTITUTO -->
+  <a-plane position="-4.2 5.66 -7.63" width=".7" height=".9" color="#12dfff"
+    material="shader: flat; color: #12dfff"></a-plane>
+  <a-image src="#logo" position="-4.2 5.66 -7.62" width=".6" height=".81"></a-image>
+
+  <!-- INSTITUTO NACIONAL DE ACAJUTLA -->
+  <a-text value="INSTITUTO NACIONAL DE ACAJUTLA"
+    position="0.5 5.66 -7.62" align="center" color="#20eaff" opacity=".35"
+    width="8" scale="1.24 1.24 1.24" font="mozillavr"
+    animation="property: scale; from: 1.22 1.22 1.22; to: 1.28 1.28 1.28; dir: alternate; loop: true; dur: 2200; easing: easeInOutSine"></a-text>
+  <a-text value="INSTITUTO NACIONAL DE ACAJUTLA"
+    position="0.5 5.66 -7.61" align="center" color="#ffffff"
+    width="8" scale="1.18 1.18 1.18" font="mozillavr"
+    material="shader: flat; emissive: #ffffff"></a-text>
+
+  <a-text value="FERIA DE LOGROS"
+    position="0 4.95 -7.62" align="center" color="#20eaff" opacity=".35"
     width="10.4" scale="1.44 1.44 1.44" font="mozillavr"
     animation="property: scale; from: 1.42 1.42 1.42; to: 1.5 1.5 1.5; dir: alternate; loop: true; dur: 2200; easing: easeInOutSine"></a-text>
-  <a-text value="FERIA DE LOGROS" position="0 5.52 -7.61" align="center" color="#ffffff"
-    width="10.4" scale="1.38 1.38 1.38" font="mozillavr" material="shader: flat; emissive: #ffffff"></a-text>
+  <a-text value="FERIA DE LOGROS"
+    position="0 4.95 -7.61" align="center" color="#ffffff"
+    width="10.4" scale="1.38 1.38 1.38" font="mozillavr"
+    material="shader: flat; emissive: #ffffff"></a-text>
 
-  <a-text value="MATEMATICA 2026" position="0 4.92 -7.62" align="center" color="#12dfff" opacity=".35"
+  <a-text value="MATEMATICA 2026"
+    position="0 4.4 -7.62" align="center" color="#12dfff" opacity=".35"
     width="10.8" scale="1.34 1.34 1.34" font="mozillavr"
     animation="property: scale; from: 1.32 1.32 1.32; to: 1.4 1.4 1.4; dir: alternate; loop: true; dur: 2200; easing: easeInOutSine"></a-text>
-  <a-text value="MATEMATICA 2026" position="0 4.92 -7.61" align="center" color="#12dfff"
-    width="10.8" scale="1.28 1.28 1.28" font="mozillavr" material="shader: flat; emissive: #12dfff"></a-text>
+  <a-text value="MATEMATICA 2026"
+    position="0 4.4 -7.61" align="center" color="#12dfff"
+    width="10.8" scale="1.28 1.28 1.28" font="mozillavr"
+    material="shader: flat; emissive: #12dfff"></a-text>
 
-  <a-text value="FIGURAS GEOMETRICAS" position="0 4.2 -7.62" align="center" color="#8b5cf6" opacity=".4"
+  <a-text value="FIGURAS GEOMETRICAS"
+    position="0 3.88 -7.62" align="center" color="#8b5cf6" opacity=".4"
     width="9.8" scale="1.24 1.24 1.24" font="mozillavr"></a-text>
-  <a-text value="FIGURAS GEOMETRICAS" position="0 4.2 -7.61" align="center" color="#d8c8ff"
-    width="9.8" scale="1.18 1.18 1.18" font="mozillavr" material="shader: flat; emissive: #d8c8ff"></a-text>
+  <a-text value="FIGURAS GEOMETRICAS"
+    position="0 3.88 -7.61" align="center" color="#d8c8ff"
+    width="9.8" scale="1.18 1.18 1.18" font="mozillavr"
+    material="shader: flat; emissive: #d8c8ff"></a-text>
 
-  <a-text value="Este espacio fue creado por alumnos" position="0 3.62 -7.61" align="center" color="#e5f4ff"
+  <a-text value="Este espacio fue creado por 2° Desarrollo de Software"
+    position="0 3.5 -7.61" align="center" color="#e5f4ff"
     width="10.8" scale=".88 .88 .88"></a-text>
-  <a-text value="de segundo curso de desarrollo de software." position="0 3.28 -7.61" align="center" color="#9fe9ff"
-    width="10.2" scale=".88 .88 .88"></a-text>
+
+  <!-- CUADRO DE INTEGRANTES -->
+  <a-box position="0 2.4 -7.665" width="11.3" height="1.75" depth=".03" color="#0a1030"
+    material="emissive: #8b5cf6; emissiveIntensity: 1.1"></a-box>
+  <a-box position="0 2.4 -7.645" width="11.1" height="1.55" depth=".03" color="#071a3d"
+    material="emissive: #0a2a66; emissiveIntensity: .6"></a-box>
+  <a-box position="0 3.22 -7.63" width="11.1" height=".03" depth=".02" color="#12dfff"
+    material="emissive: #12dfff; emissiveIntensity: 1.2"></a-box>
+  <a-text value="INTEGRANTES" position="0 3.0 -7.6" align="center" color="#20eaff"
+    width="6" scale="1.2 1.2 1.2" font="mozillavr" material="shader: flat"></a-text>
+  <a-entity id="teamNames"></a-entity>
 
   <!-- PLATAFORMA CENTRAL -->
-  <a-cylinder position="0 .18 -3" radius="1.03" height=".36" color="#09243a"
-    material="metalness: .7; roughness: .22"></a-cylinder>
-  <a-cylinder position="0 .38 -3" radius="1.02" height=".035" color="#14cfff"
-    material="emissive: #14cfff; emissiveIntensity: 1.3"></a-cylinder>
+  <a-cylinder position="0 .18 -3" radius="1.03" height=".36" color="#09243a" material="metalness: .7; roughness: .22"></a-cylinder>
+  <a-cylinder position="0 .38 -3" radius="1.02" height=".035" color="#14cfff" material="emissive: #14cfff; emissiveIntensity: 1.3"></a-cylinder>
   <a-cylinder position="0 .44 -3" radius=".94" height=".12" color="#12314a"></a-cylinder>
   <a-torus position="0 .52 -3" rotation="90 0 0" radius=".77" radius-tubular=".018" color="#5cecff"
     material="emissive: #5cecff; emissiveIntensity: 1.2"></a-torus>
 
   <!-- COLUMNAS LATERALES -->
   <a-box position="-6.9 1.7 -2" width=".55" height="3.1" depth="1.15" color="#0c2038"></a-box>
-  <a-box position="-6.9 1.7 -2" width=".59" height=".045" depth="1.2" color="#8b5cf6"
-    material="emissive: #8b5cf6; emissiveIntensity: 1"></a-box>
+  <a-box position="-6.9 1.7 -2" width=".59" height=".045" depth="1.2" color="#8b5cf6" material="emissive: #8b5cf6; emissiveIntensity: 1"></a-box>
   <a-box position="6.9 1.7 -2" width=".55" height="3.1" depth="1.15" color="#0c2038"></a-box>
-  <a-box position="6.9 1.7 -2" width=".59" height=".045" depth="1.2" color="#00ffd0"
-    material="emissive: #00ffd0; emissiveIntensity: 1"></a-box>
+  <a-box position="6.9 1.7 -2" width=".59" height=".045" depth="1.2" color="#00ffd0" material="emissive: #00ffd0; emissiveIntensity: 1"></a-box>
 
-  <!-- FIGURAS 3D: SE MUESTRA UNA A LA VEZ -->
+  <!-- FIGURAS 3D (1 cm = 0.25 unidades; medidas base: ver MEAS) -->
   <a-entity id="figure" position="0 1.65 -3">
     <a-box id="cube" class="figure-hit" width="1.25" height="1.25" depth="1.25" color="#32c8ff"
       material="metalness: .28; roughness: .2; emissive: #087ba8; emissiveIntensity: .25"></a-box>
-    <a-sphere id="sphere" class="figure-hit" radius=".76" color="#ffb547"
+    <a-sphere id="sphere" class="figure-hit" radius=".75" color="#ffb547"
       material="metalness: .28; roughness: .18; emissive: #9a4d00; emissiveIntensity: .2" visible="false"></a-sphere>
-    <a-cylinder id="cylinder" class="figure-hit" radius=".62" height="1.42" color="#51f0c0"
+    <a-cylinder id="cylinder" class="figure-hit" radius=".625" height="1.5" color="#51f0c0"
       material="metalness: .24; roughness: .2; emissive: #067d65; emissiveIntensity: .2" visible="false"></a-cylinder>
-    <a-cone id="cone" class="figure-hit" radius-bottom=".78" radius-top="0" height="1.48" color="#f08cff"
+    <a-cone id="cone" class="figure-hit" radius-bottom=".75" radius-top="0" height="1.5" color="#f08cff"
       material="metalness: .22; roughness: .22; emissive: #8f249f; emissiveIntensity: .2" visible="false"></a-cone>
     <a-entity id="pyramid" visible="false">
-      <a-cone class="figure-hit" radius-bottom=".82" radius-top="0" height="1.48"
+      <a-cone class="figure-hit" radius-bottom=".884" radius-top="0" height="1.5"
         segments-radial="4" rotation="0 45 0" color="#ff6b88"
         material="metalness: .22; roughness: .22; emissive: #991b43; emissiveIntensity: .2"></a-cone>
     </a-entity>
+    <a-entity id="dimsRoot"></a-entity>
   </a-entity>
 
-  <!-- CÁMARA, MANDOS Y MANOS VR -->
+  <!-- ETIQUETAS DE MEDIDAS (siempre miran al usuario) -->
+  <a-entity id="labelsRoot"></a-entity>
+
+  <!-- PANTALLA 3D DE LA CALCULADORA (se construye por código) -->
+  <a-entity id="calc3d" position="4.3 1.75 -2.2" rotation="0 -30 0" visible="false"></a-entity>
+
+  <!-- CÁMARA Y VR -->
   <a-entity id="cameraRig" position="0 0 1.25">
-    <a-camera id="playerCamera" position="0 1.6 0" wasd-controls-enabled="false"
-      look-controls="pointerLockEnabled: false">
+    <a-camera id="playerCamera" position="0 1.6 0" wasd-controls-enabled="false" look-controls="pointerLockEnabled: false">
       <a-entity cursor="rayOrigin: mouse; fuse: false"
         raycaster="objects: .figure-hit, .vr-button-hit; far: 12"
         material="color: #d9fbff; shader: flat"></a-entity>
     </a-camera>
-
-    <!-- PANELES VR AL ALCANCE -->
     <a-entity id="vrPanels" visible="false">
       <a-entity id="panelFigures" position="-.8 1.15 -.7" rotation="-20 22 0"></a-entity>
       <a-entity id="panelActions" position=".8 1.15 -.7" rotation="-20 -22 0"></a-entity>
@@ -162,20 +204,24 @@
 <div id="app">
   <aside class="panel">
 
-    <div class="eyebrow">Experiencia de realidad virtual</div>
-    <h1>GeoLab XR</h1>
+    <div class="head">
+      <img id="panelLogo" alt="Logo">
+      <div>
+        <div class="eyebrow">Experiencia de realidad virtual</div>
+        <h1>GeoLab XR</h1>
+      </div>
+    </div>
     <p class="small">Laboratorio futurista para aprender geometría en 3D.</p>
 
     <div class="buttons">
       <button onclick="showSection('start')">Figuras</button>
-      <button onclick="showSection('calc')">Calculadora</button>
+      <button onclick="showSection('start'); toggleCalc(true)">Calculadora</button>
       <button class="secondary" onclick="showSection('info')">Proyecto</button>
       <button class="secondary" onclick="enterVR()">Entrar a VR</button>
     </div>
 
     <section id="start">
       <h2>Elegí una figura</h2>
-
       <div class="buttons">
         <button data-shape="cube" onclick="selectFigure('cube')">Cubo</button>
         <button data-shape="sphere" onclick="selectFigure('sphere')">Esfera</button>
@@ -185,8 +231,15 @@
       </div>
 
       <h2 id="figureName">Cubo</h2>
-      <p id="figureDescription">Sólido con seis caras cuadradas iguales.</p>
-      <p id="figureCharacteristics">Caras: 6 · Aristas: 12 · Vértices: 8<br>Área total: A = 6a²</p>
+      <p id="figureDescription"></p>
+      <p id="figureCharacteristics"></p>
+
+      <div class="result" id="measures"></div>
+
+      <div class="field">
+        <label for="sizeSlider">Tamaño de la figura: <span id="sizeLabel">100%</span></label>
+        <input id="sizeSlider" type="range" min="40" max="300" value="100" oninput="setFigureScale(this.value/100)">
+      </div>
 
       <div class="buttons">
         <button class="secondary" onclick="moveFigure(-.2,0,0)">Mover ←</button>
@@ -197,47 +250,26 @@
         <button class="secondary" onclick="scaleFigure(1.1)">Aumentar</button>
         <button class="secondary" onclick="resetFigure()">Centrar figura</button>
         <button class="secondary" onclick="resetPlayer()">Reubicar usuario</button>
-        <button class="secondary" onclick="toggleInfo()">Ver medidas</button>
-        <button class="secondary" onclick="toggleCalc()">Calculadora 3D</button>
       </div>
 
-      <p class="small">Meta Quest (mandos o manos): apunta con el rayo y presiona el gatillo (o pellizca con la mano) para agarrar la figura o pulsar los botones. <strong>Doble gatillo/pellizco sobre la figura: abre la ventana de medidas.</strong> Para moverte: joystick izquierdo camina y derecho gira, o apunta al piso y presiona/pellizca para teletransportarte. Grip: cambia de figura. Joystick derecho adelante/atras: acerca o aleja la figura agarrada.</p>
-      <p class="small">Computadora: usa WASD para caminar y Q/E para girar. Doble click sobre la figura abre las medidas.</p>
-    </section>
+      <p class="small">Meta Quest (mandos o manos): apunta con el rayo y presiona el gatillo (o pellizca) para agarrar la figura o pulsar botones. <b>Para agrandar o reducir: agarra la figura con las dos manos a la vez y sepáralas (aumenta) o júntalas (reduce); las medidas en cm se actualizan en tiempo real.</b> Joystick izquierdo camina, derecho gira, o apunta al piso y pellizca para teletransportarte. Grip: cambia de figura.</p>
+      <p class="small">Computadora: WASD para caminar, Q/E para girar, y el control deslizante para cambiar el tamaño.</p>
 
-    <section id="calc" class="hidden">
-      <h2>Calculadora de área total</h2>
-
-      <div class="field">
-        <label for="calcFigure">Figura</label>
-        <select id="calcFigure" onchange="renderCalcFields()">
-          <option value="cube">Cubo</option>
-          <option value="sphere">Esfera</option>
-          <option value="cylinder">Cilindro</option>
-          <option value="cone">Cono</option>
-          <option value="pyramid">Pirámide de base cuadrada</option>
-        </select>
+      <!-- CALCULADORA (hasta abajo de Figuras) -->
+      <button id="calcBtn" class="wide" onclick="toggleCalc()">Calculadora</button>
+      <div id="calcScreen" class="calc hidden">
+        <div class="eyebrow">Calculadora de área y volumen</div>
+        <div class="lcd" id="lcd"></div>
+        <div class="keys" id="keys"></div>
+        <p class="small">SIG: siguiente dato · MED: usar las medidas actuales de la figura · También aparece como pantalla 3D junto a la plataforma.</p>
       </div>
-
-      <div id="calcFields"></div>
-      <button onclick="calculateArea()">Calcular área</button>
-      <div id="calcResult" class="result hidden"></div>
-      <p><button class="secondary" onclick="showSection('start')">Volver a figuras</button></p>
     </section>
 
     <section id="info" class="hidden">
       <h2>Sobre GeoLab XR</h2>
-      <p>Aplicación educativa de geometría en tres dimensiones, creada para la Feria de Logros Matemática 2026.</p>
+      <p>Aplicación educativa de geometría en tres dimensiones, creada para la Feria de Logros Matemática 2026 por 2° Desarrollo de Software, Instituto Nacional de Acajutla.</p>
       <strong>Integrantes</strong>
-      <ul class="team">
-        <li>Oscar Rafael Melgar Macal</li>
-        <li>Oscar Alejandro Rivas Padilla</li>
-        <li>Adonis Fernando Ortiz Arévalo</li>
-        <li>Cristian Valdemar Alas Melgar</li>
-        <li>Blanca Abigail Erazo Martínez</li>
-        <li>Rosmery Sarai Miranda Salazar</li>
-        <li>Yuditza Maribel Maldonado Tzul</li>
-      </ul>
+      <ul class="team" id="teamList"></ul>
       <button class="secondary" onclick="showSection('start')">Volver</button>
     </section>
   </aside>
@@ -252,7 +284,35 @@
   const camera = document.getElementById('playerCamera');
   const statusEl = document.getElementById('status');
 
-  // GENERAR DETALLES FUTURISTAS
+  document.getElementById('panelLogo').src = document.getElementById('logo').src;
+
+  // INTEGRANTES
+  const TEAM = [
+    'Oscar Alejandro Rivas Padilla',
+    'Adonis Fernando Ortiz Arévalo',
+    'Oscar Rafael Melgar Macal',
+    'Cristian Valdemar Alas Melgar',
+    'Rosmery Saraí Miranda Salazar',
+    'Blanca Abigail Erazo Martínez',
+    'Yuditza Maribel Maldonado Tzul'
+  ];
+  TEAM.forEach((name, i) => {
+    const li = document.createElement('li');
+    li.textContent = name;
+    document.getElementById('teamList').appendChild(li);
+
+    const col = i < 4 ? 0 : 1;
+    const row = i < 4 ? i : i - 4;
+    const t = document.createElement('a-text');
+    t.setAttribute('value', name);
+    t.setAttribute('align', 'center');
+    t.setAttribute('color', col ? '#d8c8ff' : '#e5f4ff');
+    t.setAttribute('width', '5.4');
+    t.setAttribute('position', `${col ? 2.9 : -2.9} ${2.68 - row * .3} -7.6`);
+    document.getElementById('teamNames').appendChild(t);
+  });
+
+  // DETALLES FUTURISTAS
   function makeBox(parent, position, size, color, material = '') {
     const el = document.createElement('a-box');
     el.setAttribute('position', position);
@@ -270,12 +330,10 @@
   const ceilingLights = document.getElementById('ceilingLights');
   const roomDetails = document.getElementById('roomDetails');
 
-  for (let x = -7.5; x <= 7.5; x += .75) {
+  for (let x = -7.5; x <= 7.5; x += .75)
     makeBox(floorGrid, `${x} .008 -2`, [.012, .012, 11.8], '#0b4260', 'emissive: #0b4260; emissiveIntensity: .5');
-  }
-  for (let z = -7.5; z <= 3.5; z += .75) {
+  for (let z = -7.5; z <= 3.5; z += .75)
     makeBox(floorGrid, `0 .009 ${z}`, [15.8, .012, .012], '#0b4260', 'emissive: #0b4260; emissiveIntensity: .5');
-  }
 
   for (const y of [.18, 6.25]) {
     makeBox(wallAccents, `0 ${y} -7.82`, [15.6, .035, .035], '#0bdcff', 'emissive: #0bdcff; emissiveIntensity: 1');
@@ -283,11 +341,8 @@
     makeBox(wallAccents, `-7.82 ${y} -2`, [.035, .035, 11.6], '#0bdcff', 'emissive: #0bdcff; emissiveIntensity: 1');
     makeBox(wallAccents, `7.82 ${y} -2`, [.035, .035, 11.6], '#00ffc8', 'emissive: #00ffc8; emissiveIntensity: 1');
   }
-
-  for (const x of [-5.7, -2.9, 0, 2.9, 5.7]) {
+  for (const x of [-5.7, -2.9, 0, 2.9, 5.7])
     makeBox(ceilingLights, `${x} 6.25 -2`, [1.6, .045, .32], '#d5fbff', 'emissive: #8deeff; emissiveIntensity: 1');
-  }
-
   for (const z of [-5.2, -3.8, -2.4, -1, .4, 1.8]) {
     makeBox(roomDetails, `-7.78 2.5 ${z}`, [.06, 1.25, .055], '#7c3aed', 'emissive: #7c3aed; emissiveIntensity: .8');
     makeBox(roomDetails, `7.78 2.5 ${z}`, [.06, 1.25, .055], '#00d9ff', 'emissive: #00d9ff; emissiveIntensity: .8');
@@ -295,67 +350,293 @@
 
   // DATOS EDUCATIVOS
   const figureData = {
-    cube: {
-      name: 'Cubo',
-      desc: 'Sólido con seis caras cuadradas iguales.',
-      chars: 'Caras: 6 · Aristas: 12 · Vértices: 8<br>Área total: A = 6a²'
-    },
-    sphere: {
-      name: 'Esfera',
-      desc: 'Todos los puntos de su superficie están a la misma distancia del centro.',
-      chars: 'Superficie curva · Sin aristas ni vértices<br>Área: A = 4πr²'
-    },
-    cylinder: {
-      name: 'Cilindro',
-      desc: 'Tiene dos bases circulares iguales y una superficie lateral curva.',
-      chars: '2 bases circulares · 2 aristas curvas<br>Área: A = 2πr(r + h)'
-    },
-    cone: {
-      name: 'Cono',
-      desc: 'Tiene una base circular y un vértice.',
-      chars: '1 base circular · 1 vértice<br>Área: A = πr(r + g)'
-    },
-    pyramid: {
-      name: 'Pirámide',
-      desc: 'Pirámide de base cuadrada con cuatro caras triangulares.',
-      chars: '5 caras · 8 aristas · 5 vértices<br>Área: A = a² + 2ag'
-    }
+    cube: { name: 'Cubo', desc: 'Sólido con seis caras cuadradas iguales.',
+      chars: 'Caras: 6 · Aristas: 12 · Vértices: 8<br>Área total: A = 6a²' },
+    sphere: { name: 'Esfera', desc: 'Todos los puntos de su superficie están a la misma distancia del centro.',
+      chars: 'Superficie curva · Sin aristas ni vértices<br>Área: A = 4πr²' },
+    cylinder: { name: 'Cilindro', desc: 'Tiene dos bases circulares iguales y una superficie lateral curva.',
+      chars: '2 bases circulares · 2 aristas curvas<br>Área: A = 2πr(r + h)' },
+    cone: { name: 'Cono', desc: 'Tiene una base circular y un vértice.',
+      chars: '1 base circular · 1 vértice<br>Área: A = πr(r + g)' },
+    pyramid: { name: 'Pirámide', desc: 'Pirámide de base cuadrada con cuatro caras triangulares.',
+      chars: '5 caras · 8 aristas · 5 vértices<br>Área: A = a² + 2ag' }
+  };
+
+  // MEDIDAS BASE EN CM (escala 100%). 1 cm = 0.25 unidades 3D.
+  const MEAS = {
+    cube: { a: 5 }, sphere: { r: 3 }, cylinder: { r: 2.5, h: 6 },
+    cone: { r: 3, h: 6 }, pyramid: { a: 5, h: 6 }
+  };
+
+  // Líneas de cotas [inicio, fin, medida, desplazamiento de la etiqueta] (coordenadas locales)
+  const DIMS = {
+    cube: [
+      [[-.625, .625, .625], [.625, .625, .625], 'a', [0, .15, 0]],
+      [[-.625, -.625, .625], [-.625, .625, .625], 'a', [-.3, 0, 0]],
+      [[.625, .625, -.625], [.625, .625, .625], 'a', [.3, .1, 0]]
+    ],
+    sphere: [[[0, 0, 0], [.75, 0, 0], 'r', [0, .13, 0]]],
+    cylinder: [
+      [[0, .75, 0], [.625, .75, 0], 'r', [0, .14, 0]],
+      [[0, -.75, 0], [0, .75, 0], 'h', [-.35, 0, 0]]
+    ],
+    cone: [
+      [[0, -.75, 0], [.75, -.75, 0], 'r', [0, -.15, 0]],
+      [[0, -.75, 0], [0, .75, 0], 'h', [-.35, 0, 0]],
+      [[0, .75, 0], [.75, -.75, 0], 'g', [.3, .1, 0]]
+    ],
+    pyramid: [
+      [[-.625, -.75, .625], [.625, -.75, .625], 'a', [0, -.15, 0]],
+      [[0, -.75, 0], [0, .75, 0], 'h', [-.35, 0, 0]],
+      [[0, .75, 0], [0, -.75, .625], 'g', [.3, .1, .1]]
+    ]
   };
 
   let currentFigure = 'cube';
   let figureScale = 1;
   const figureHome = { x: 0, y: 1.65, z: -3 };
 
-  function showSection(id) {
-    ['start', 'calc', 'info'].forEach(section => {
-      document.getElementById(section).classList.toggle('hidden', section !== id);
+  function valuesFor(id) {
+    const v = {};
+    for (const k in MEAS[id]) v[k] = MEAS[id][k] * figureScale;
+    if (id === 'cone') v.g = Math.hypot(v.r, v.h);
+    if (id === 'pyramid') v.g = Math.hypot(v.h, v.a / 2);
+    return v;
+  }
+
+  function areaVolume(id, v) {
+    const P = Math.PI;
+    if (id === 'cube') return [6 * v.a ** 2, v.a ** 3];
+    if (id === 'sphere') return [4 * P * v.r ** 2, 4 / 3 * P * v.r ** 3];
+    if (id === 'cylinder') return [2 * P * v.r * (v.r + v.h), P * v.r ** 2 * v.h];
+    if (id === 'cone') return [P * v.r * (v.r + v.g), P * v.r ** 2 * v.h / 3];
+    return [v.a ** 2 + 2 * v.a * v.g, v.a ** 2 * v.h / 3];
+  }
+
+  // COTAS 3D EN TIEMPO REAL
+  const dimsRoot = document.getElementById('dimsRoot');
+  const labelsRoot = document.getElementById('labelsRoot');
+  const labels = [];
+
+  function rebuildDims(id) {
+    while (dimsRoot.firstChild) dimsRoot.removeChild(dimsRoot.firstChild);
+    while (labelsRoot.firstChild) labelsRoot.removeChild(labelsRoot.firstChild);
+    labels.length = 0;
+
+    DIMS[id].forEach(([p, q, key, off]) => {
+      const line = document.createElement('a-entity');
+      line.setAttribute('line', `start: ${p.join(' ')}; end: ${q.join(' ')}; color: #ffe066`);
+      line.addEventListener('loaded', () => {
+        const o = line.getObject3D('line');
+        if (o) { o.material.depthTest = false; o.renderOrder = 10; }
+      });
+      dimsRoot.appendChild(line);
+
+      [p, q].forEach(pt => {
+        const s = document.createElement('a-sphere');
+        s.setAttribute('radius', '.03');
+        s.setAttribute('position', pt.join(' '));
+        s.setAttribute('material', 'color: #ffe066; shader: flat; depthTest: false');
+        dimsRoot.appendChild(s);
+      });
+
+      const anchor = document.createElement('a-entity');
+      anchor.setAttribute('position', p.map((c, i) => (c + q[i]) / 2 + off[i]).join(' '));
+      dimsRoot.appendChild(anchor);
+
+      const lab = document.createElement('a-entity');
+      const bg = document.createElement('a-plane');
+      bg.setAttribute('width', '.78');
+      bg.setAttribute('height', '.2');
+      bg.setAttribute('material', 'color: #0a1030; opacity: .85; transparent: true; shader: flat; depthTest: false');
+      const tx = document.createElement('a-text');
+      tx.setAttribute('align', 'center');
+      tx.setAttribute('color', '#ffe066');
+      tx.setAttribute('width', '2.2');
+      tx.setAttribute('position', '0 0 .01');
+      lab.appendChild(bg);
+      lab.appendChild(tx);
+      labelsRoot.appendChild(lab);
+      labels.push({ key, anchor, lab, bg, tx });
     });
-    if (id === 'calc') {
-      document.getElementById('calcFigure').value = currentFigure;
-      renderCalcFields();
+    updateDims();
+  }
+
+  function updateDims() {
+    const v = valuesFor(currentFigure);
+    labels.forEach(l => l.tx.setAttribute('value', `${l.key} = ${v[l.key].toFixed(1)} cm`));
+
+    const [A, V] = areaVolume(currentFigure, v);
+    const names = { a: 'Lado a', r: 'Radio r', h: 'Altura h', g: 'Apotema/generatriz g' };
+    document.getElementById('measures').innerHTML =
+      Object.keys(v).map(k => `${names[k]} = <strong>${v[k].toFixed(1)} cm</strong>`).join('<br>') +
+      `<br>Área total: <strong>${A.toFixed(1)} cm²</strong><br>Volumen: <strong>${V.toFixed(1)} cm³</strong>`;
+    document.getElementById('sizeLabel').textContent = Math.round(figureScale * 100) + '%';
+    document.getElementById('sizeSlider').value = Math.round(figureScale * 100);
+  }
+
+  const _cp = new THREE.Vector3();
+  const _lp = new THREE.Vector3();
+  function updateLabels() {
+    camera.object3D.getWorldPosition(_cp);
+    labels.forEach(l => {
+      if (!l.anchor.object3D) return;
+      l.anchor.object3D.getWorldPosition(_lp);
+      l.lab.object3D.position.copy(_lp);
+      l.lab.object3D.lookAt(_cp);
+      const t = l.tx.getObject3D('text'), p = l.bg.getObject3D('mesh');
+      if (t && !t.userData.fx) { t.material.depthTest = false; t.renderOrder = 12; t.userData.fx = 1; }
+      if (p && !p.userData.fx) { p.renderOrder = 11; p.userData.fx = 1; }
+    });
+  }
+
+  // ================= CALCULADORA (HTML + PANTALLA 3D) =================
+  const CALC_FIELDS = {
+    cube: ['a'], sphere: ['r'], cylinder: ['r', 'h'], cone: ['r', 'h'], pyramid: ['a', 'g']
+  };
+  const FORMULA = {
+    cube: 'A = 6a²', sphere: 'A = 4·pi·r²', cylinder: 'A = 2·pi·r·(r+h)',
+    cone: 'A = pi·r·(r+g)', pyramid: 'A = a² + 2·a·g'
+  };
+  const KEYS = ['7','8','9','C','4','5','6','B','1','2','3','N','0','.','M','E'];
+  const KEY_LABEL = { C: 'C', B: 'DEL', N: 'SIG', M: 'MED', E: '=' };
+  const KEY_COLOR = { C: '#fb7185', B: '#fbbf24', N: '#a78bfa', M: '#34d399', E: '#f97316' };
+
+  const CALC = { open: false, vals: [''], idx: 0, msg: '' };
+  const calcTexts = [];
+  const calc3d = document.getElementById('calc3d');
+
+  function buildCalc3D() {
+    const mk = (tag, attrs, parent = calc3d) => {
+      const el = document.createElement(tag);
+      for (const k in attrs) el.setAttribute(k, attrs[k]);
+      parent.appendChild(el);
+      return el;
+    };
+    mk('a-plane', { width: 1.6, height: 2.05, position: '0 .125 -.01', material: 'shader: flat; color: #12dfff' });
+    mk('a-plane', { width: 1.52, height: 1.97, position: '0 .125 -.005', material: 'shader: flat; color: #04122a' });
+    mk('a-text', { value: 'CALCULADORA', align: 'center', color: '#20eaff', width: 2.4, position: '0 1.0 .01' });
+    mk('a-plane', { width: 1.36, height: .68, position: '0 .62 0', material: 'shader: flat; color: #031c17' });
+    [.84, .7, .56, .42].forEach(y => {
+      calcTexts.push(mk('a-text', { value: '', align: 'left', color: '#5dffb0', width: 1.7, position: `-.64 ${y} .01` }));
+    });
+
+    KEYS.forEach((k, i) => {
+      const col = i % 4, row = Math.floor(i / 4);
+      const btn = mk('a-entity', { position: `${(-.51 + col * .34).toFixed(2)} ${(.12 - row * .25).toFixed(2)} 0` });
+      btn.classList.add('vr-button');
+      btn.dataset.action = 'k:' + k;
+      const face = mk('a-plane', {
+        width: .3, height: .2,
+        material: `color: #0b2942; emissive: ${KEY_COLOR[k] || '#16bff4'}; emissiveIntensity: .5`
+      }, btn);
+      face.classList.add('vr-button-hit');
+      mk('a-text', { value: KEY_LABEL[k] || k, align: 'center', color: '#effbff', width: 1.2, position: '0 0 .01' }, btn);
+    });
+    mk('a-text', { value: 'SIG: siguiente dato  MED: medidas actuales', align: 'center', color: '#9cb7cf', width: 1.5, position: '0 -.82 .01' });
+  }
+
+  function buildCalcHTML() {
+    const box = document.getElementById('keys');
+    KEYS.forEach(k => {
+      const b = document.createElement('button');
+      b.textContent = KEY_LABEL[k] || k;
+      if (k === 'C' || k === 'B' || k === 'N' || k === 'M') b.className = 'secondary';
+      b.onclick = () => calcPress(k);
+      box.appendChild(b);
+    });
+  }
+
+  function calcCompute() {
+    const f = CALC_FIELDS[currentFigure];
+    const v = {};
+    for (let i = 0; i < f.length; i++) {
+      const n = parseFloat(CALC.vals[i]);
+      if (!(n > 0)) return null;
+      v[f[i]] = n;
     }
+    if (currentFigure === 'cone') v.g = Math.hypot(v.r, v.h);
+    if (currentFigure === 'pyramid') v.h = v.g > v.a / 2 ? Math.sqrt(v.g ** 2 - v.a ** 2 / 4) : NaN;
+    const [A, V] = areaVolume(currentFigure, v);
+    return { A, V };
+  }
+
+  function calcRender() {
+    const f = CALC_FIELDS[currentFigure];
+    const res = calcCompute();
+    const fmt = n => Number.isFinite(n) ? n.toFixed(2) : 'n/d';
+    const lines = [
+      `${figureData[currentFigure].name}  ${FORMULA[currentFigure]}`,
+      f.map((k, i) => `${i === CALC.idx ? '>' : ' '}${k}=${CALC.vals[i] || '_'}`).join('   '),
+      res ? `Area = ${fmt(res.A)} cm²` : (CALC.msg || 'Area = ---'),
+      res ? `Volumen = ${fmt(res.V)} cm³` : 'Volumen = ---'
+    ];
+    calcTexts.forEach((t, i) => t.setAttribute('value', lines[i]));
+    document.getElementById('lcd').textContent = lines.join('\n');
+  }
+
+  function calcReset() {
+    CALC.vals = CALC_FIELDS[currentFigure].map(() => '');
+    CALC.idx = 0;
+    CALC.msg = '';
+    calcRender();
+  }
+
+  function calcPress(k) {
+    CALC.msg = '';
+    const f = CALC_FIELDS[currentFigure];
+    if (k === 'C') { calcReset(); return; }
+    if (k === 'B') CALC.vals[CALC.idx] = CALC.vals[CALC.idx].slice(0, -1);
+    else if (k === 'N') CALC.idx = (CALC.idx + 1) % f.length;
+    else if (k === 'M') {
+      const v = valuesFor(currentFigure);
+      CALC.vals = f.map(key => v[key].toFixed(1));
+    } else if (k === 'E') {
+      if (!calcCompute()) CALC.msg = 'Faltan datos';
+    } else {
+      const cur = CALC.vals[CALC.idx];
+      if (cur.length < 8 && !(k === '.' && cur.includes('.'))) CALC.vals[CALC.idx] = cur + k;
+    }
+    calcRender();
+  }
+
+  function toggleCalc(force) {
+    CALC.open = typeof force === 'boolean' ? force : !CALC.open;
+    calc3d.setAttribute('visible', CALC.open);
+    document.getElementById('calcScreen').classList.toggle('hidden', !CALC.open);
+    document.getElementById('calcBtn').textContent = CALC.open ? 'Ocultar calculadora' : 'Calculadora';
+    if (CALC.open) {
+      document.getElementById('calcScreen').scrollIntoView({ block: 'nearest' });
+      statusEl.textContent = 'Calculadora activa: también está como pantalla 3D junto a la plataforma.';
+    }
+  }
+
+  buildCalc3D();
+  buildCalcHTML();
+
+  // INTERFAZ
+  function showSection(id) {
+    ['start', 'info'].forEach(s =>
+      document.getElementById(s).classList.toggle('hidden', s !== id));
   }
 
   function selectFigure(id) {
     if (!figureData[id]) return;
     currentFigure = id;
-
-    ['cube', 'sphere', 'cylinder', 'cone', 'pyramid'].forEach(key => {
-      document.getElementById(key).setAttribute('visible', key === id);
-    });
+    ['cube', 'sphere', 'cylinder', 'cone', 'pyramid'].forEach(key =>
+      document.getElementById(key).setAttribute('visible', key === id));
 
     document.getElementById('figureName').textContent = figureData[id].name;
     document.getElementById('figureDescription').textContent = figureData[id].desc;
     document.getElementById('figureCharacteristics').innerHTML = figureData[id].chars;
-
-    document.querySelectorAll('[data-shape]').forEach(button => {
-      button.classList.toggle('active', button.dataset.shape === id);
-    });
+    document.querySelectorAll('[data-shape]').forEach(b =>
+      b.classList.toggle('active', b.dataset.shape === id));
 
     figureScale = 1;
     figureRoot.setAttribute('scale', '1 1 1');
+    rebuildDims(id);
+    calcReset();
     statusEl.textContent = `${figureData[id].name} seleccionada.`;
-    refreshInfo();
   }
 
   function moveFigure(dx, dy, dz) {
@@ -367,24 +648,23 @@
     });
   }
 
-  function rotateFigure(degrees) {
+  function rotateFigure(deg) {
     const r = figureRoot.getAttribute('rotation');
-    figureRoot.setAttribute('rotation', { x: r.x, y: r.y + degrees, z: r.z });
+    figureRoot.setAttribute('rotation', { x: r.x, y: r.y + deg, z: r.z });
   }
 
-  function scaleFigure(factor) {
-    figureScale = Math.max(.45, Math.min(1.8, figureScale * factor));
+  function setFigureScale(s) {
+    figureScale = Math.max(.4, Math.min(3, s));
     figureRoot.setAttribute('scale', `${figureScale} ${figureScale} ${figureScale}`);
-    refreshInfo();
+    updateDims();
   }
+  function scaleFigure(f) { setFigureScale(figureScale * f); }
 
   function resetFigure() {
     figureRoot.setAttribute('position', figureHome);
     figureRoot.setAttribute('rotation', '0 0 0');
-    figureScale = 1;
-    figureRoot.setAttribute('scale', '1 1 1');
+    setFigureScale(1);
     statusEl.textContent = 'Figura centrada en la plataforma.';
-    refreshInfo();
   }
 
   function resetPlayer() {
@@ -399,109 +679,39 @@
     else statusEl.textContent = 'Usa un navegador compatible con WebXR y HTTPS.';
   }
 
-  // CALCULADORA DE ÁREAS (panel 2D)
-  function renderCalcFields() {
-    const kind = document.getElementById('calcFigure').value;
-    const field = (id, label) =>
-      `<div class="field">
-        <label for="${id}">${label}</label>
-        <input id="${id}" type="number" min="0.01" step="any" placeholder="Ej. 3">
-      </div>`;
-
-    let html = '';
-    if (kind === 'cube') html = field('side', 'Lado (a)');
-    if (kind === 'sphere') html = field('radius', 'Radio (r)');
-    if (kind === 'cylinder') html = field('radius', 'Radio (r)') + field('height', 'Altura (h)');
-    if (kind === 'cone') html = field('radius', 'Radio (r)') + field('height', 'Altura (h)');
-    if (kind === 'pyramid') html = field('side', 'Lado de la base (a)') + field('apothem', 'Apotema lateral (g)');
-
-    document.getElementById('calcFields').innerHTML = html;
-    document.getElementById('calcResult').classList.add('hidden');
-  }
-
-  function getValue(id) {
-    const input = document.getElementById(id);
-    if (!input || input.value.trim() === '') return NaN;
-    const value = Number(input.value);
-    return value > 0 ? value : NaN;
-  }
-
-  function calculateArea() {
-    const kind = document.getElementById('calcFigure').value;
-    let area = NaN;
-    let formula = '';
-
-    if (kind === 'cube') {
-      const a = getValue('side');
-      area = 6 * a * a;
-      formula = 'A = 6a²';
-    } else if (kind === 'sphere') {
-      const r = getValue('radius');
-      area = 4 * Math.PI * r * r;
-      formula = 'A = 4πr²';
-    } else if (kind === 'cylinder') {
-      const r = getValue('radius');
-      const h = getValue('height');
-      area = 2 * Math.PI * r * (r + h);
-      formula = 'A = 2πr(r + h)';
-    } else if (kind === 'cone') {
-      const r = getValue('radius');
-      const h = getValue('height');
-      const g = Math.sqrt(r * r + h * h);
-      area = Math.PI * r * (r + g);
-      formula = 'A = πr(r + g), g = √(r² + h²)';
-    } else {
-      const a = getValue('side');
-      const g = getValue('apothem');
-      area = a * a + 2 * a * g;
-      formula = 'A = a² + 2ag';
-    }
-
-    const result = document.getElementById('calcResult');
-    result.classList.remove('hidden');
-
-    if (!Number.isFinite(area)) {
-      result.textContent = 'Escribe valores positivos en todos los campos.';
-    } else {
-      result.innerHTML = `<strong>Área total:</strong> ${area.toFixed(2)} unidades²<br>${formula}`;
-    }
-  }
-
-  // COLISIONES DEL USUARIO
+  // COLISIONES
   const ROOM = { minX: -7.35, maxX: 7.35, minZ: -7.35, maxZ: 3.35, radius: .28 };
   const solidBoxes = [{ x: 0, z: -3, hx: 1.03, hz: 1.03 }];
 
   function blockedAt(x, z) {
     if (x < ROOM.minX || x > ROOM.maxX || z < ROOM.minZ || z > ROOM.maxZ) return true;
-    return solidBoxes.some(box =>
-      Math.abs(x - box.x) < box.hx + ROOM.radius &&
-      Math.abs(z - box.z) < box.hz + ROOM.radius
-    );
+    return solidBoxes.some(b =>
+      Math.abs(x - b.x) < b.hx + ROOM.radius && Math.abs(z - b.z) < b.hz + ROOM.radius);
   }
 
   function movePlayer(dx, dz) {
     const p = rig.getAttribute('position');
     const nx = p.x + dx;
     if (!blockedAt(nx, p.z)) rig.setAttribute('position', { x: nx, y: p.y, z: p.z });
-
-    const afterX = rig.getAttribute('position');
-    const nz = afterX.z + dz;
-    if (!blockedAt(afterX.x, nz)) rig.setAttribute('position', { x: afterX.x, y: afterX.y, z: nz });
+    const a = rig.getAttribute('position');
+    const nz = a.z + dz;
+    if (!blockedAt(a.x, nz)) rig.setAttribute('position', { x: a.x, y: a.y, z: nz });
   }
 
   // CONTROLES VR
   const vrPanels = document.getElementById('vrPanels');
-
   const forward = new THREE.Vector3();
   const right = new THREE.Vector3();
   const xrO = new THREE.Vector3();
   const xrD = new THREE.Vector3();
   const xrQ = new THREE.Quaternion();
   const xrRay = new THREE.Raycaster();
+  const pA = new THREE.Vector3();
+  const pB = new THREE.Vector3();
 
   let heldBy = null;
+  let stretch = null;
   let grabDistance = 2.1;
-  let lastFigureTap = 0;
   const xrControllers = [];
 
   function findAncestor(entity, className) {
@@ -514,10 +724,7 @@
   }
 
   function isVisible(obj) {
-    while (obj) {
-      if (obj.visible === false) return false;
-      obj = obj.parent;
-    }
+    while (obj) { if (obj.visible === false) return false; obj = obj.parent; }
     return true;
   }
 
@@ -535,18 +742,15 @@
     selectFigure(ids[(i + dir + ids.length) % ids.length]);
   }
 
-  // ACCIONES DE LOS BOTONES 3D
   function runAction(action) {
-    if (figureData[action]) selectFigure(action);
+    if (action.startsWith('k:')) calcPress(action.slice(2));
+    else if (action === 'calc') toggleCalc();
+    else if (figureData[action]) selectFigure(action);
     else if (action === 'rotL') rotateFigure(-15);
     else if (action === 'rotR') rotateFigure(15);
     else if (action === 'smaller') scaleFigure(.9);
     else if (action === 'bigger') scaleFigure(1.1);
     else if (action === 'center') resetFigure();
-    else if (action === 'calc') toggleCalc();
-    else if (action === 'closeCalc') toggleCalc(false);
-    else if (action === 'closeInfo') toggleInfo(false);
-    else if (action.startsWith('k:')) calcKey(action.slice(2));
   }
 
   function pressButton(btn) {
@@ -555,17 +759,13 @@
     setTimeout(() => btn.setAttribute('scale', '1 1 1'), 140);
   }
 
-  // PANELES 3D (figuras y acciones)
+  // PANELES 3D EN LA MANO
   function buildPanel(parentId, title, titleColor, items) {
     const parent = document.getElementById(parentId);
-
-    // el fondo crece según la cantidad de botones
-    const n = items.length;
-    const bottom = .3 - (n - 1) * .17 - .14;
     const back = document.createElement('a-plane');
     back.setAttribute('width', '.64');
-    back.setAttribute('height', (.62 - bottom).toFixed(3));
-    back.setAttribute('position', `0 ${((.62 + bottom) / 2).toFixed(3)} -.012`);
+    back.setAttribute('height', '1.33');
+    back.setAttribute('position', '0 -.045 -.012');
     back.setAttribute('material', 'color: #04122a; opacity: .88; transparent: true; shader: flat');
     parent.appendChild(back);
 
@@ -597,215 +797,21 @@
       txt.setAttribute('width', '1.5');
       txt.setAttribute('position', '0 0 .01');
       btn.appendChild(txt);
-
       parent.appendChild(btn);
     });
   }
 
   buildPanel('panelFigures', 'FIGURAS', '#5cecff', [
-    ['cube', 'CUBO', '#16bff4'],
-    ['sphere', 'ESFERA', '#ffb547'],
-    ['cylinder', 'CILINDRO', '#51f0c0'],
-    ['cone', 'CONO', '#e879f9'],
-    ['pyramid', 'PIRAMIDE', '#fb7185'],
-    ['calc', 'CALCULADORA', '#22d3ee']
+    ['cube', 'CUBO', '#16bff4'], ['sphere', 'ESFERA', '#ffb547'],
+    ['cylinder', 'CILINDRO', '#51f0c0'], ['cone', 'CONO', '#e879f9'],
+    ['pyramid', 'PIRAMIDE', '#fb7185']
   ]);
-
   buildPanel('panelActions', 'ACCIONES', '#c4b5fd', [
-    ['rotL', 'GIRAR <', '#38bdf8'],
-    ['rotR', 'GIRAR >', '#38bdf8'],
-    ['smaller', 'REDUCIR', '#fbbf24'],
-    ['bigger', 'AUMENTAR', '#fbbf24'],
-    ['center', 'CENTRAR', '#a78bfa']
+    ['rotL', 'GIRAR <', '#38bdf8'], ['rotR', 'GIRAR >', '#38bdf8'],
+    ['smaller', 'REDUCIR', '#fbbf24'], ['bigger', 'AUMENTAR', '#fbbf24'],
+    ['center', 'CENTRAR', '#a78bfa'], ['calc', 'CALCULADORA', '#34d399']
   ]);
 
-  // ===== PANELES FLOTANTES: INFO DE MEDIDAS Y CALCULADORA 3D =====
-  function makeFloatingPanel(id, w, h, closeOnTouch = false) {
-    const p = document.createElement('a-entity');
-    p.id = id;
-    p.setAttribute('visible', 'false');
-    p.setAttribute('position', '0 -50 0');
-    const back = document.createElement('a-plane');
-    if (closeOnTouch) {
-      // tocar cualquier parte del panel lo cierra
-      p.classList.add('vr-button');
-      p.dataset.action = 'closeInfo';
-      back.classList.add('vr-button-hit');
-    }
-    back.setAttribute('width', w);
-    back.setAttribute('height', h);
-    back.setAttribute('material', 'color: #04122a; opacity: .95; transparent: true; shader: flat');
-    p.appendChild(back);
-    scene.appendChild(p);
-    return p;
-  }
-
-  function makeText(parent, value, color, width, x, y) {
-    const t = document.createElement('a-text');
-    t.setAttribute('value', value);
-    t.setAttribute('align', 'center');
-    t.setAttribute('color', color);
-    t.setAttribute('width', width);
-    t.setAttribute('position', `${x} ${y} .01`);
-    parent.appendChild(t);
-    return t;
-  }
-
-  function makeButton(parent, action, label, x, y, w, h, color, tw = .9) {
-    const btn = document.createElement('a-entity');
-    btn.classList.add('vr-button');
-    btn.dataset.action = action;
-    btn.setAttribute('position', `${x} ${y} .01`);
-    const face = document.createElement('a-plane');
-    face.classList.add('vr-button-hit');
-    face.setAttribute('width', w);
-    face.setAttribute('height', h);
-    face.setAttribute('material', `color: #0b2942; emissive: ${color}; emissiveIntensity: .45`);
-    btn.appendChild(face);
-    makeText(btn, label, '#effbff', tw, 0, 0);
-    parent.appendChild(btn);
-    return btn;
-  }
-
-  // Coloca un panel frente al usuario, mirándolo
-  function placeInFront(entity, dist) {
-    const camPos = new THREE.Vector3();
-    const dir = new THREE.Vector3();
-    camera.object3D.getWorldPosition(camPos);
-    camera.object3D.getWorldDirection(dir);
-    dir.y = 0;
-    if (dir.lengthSq() === 0) dir.set(0, 0, -1);
-    dir.normalize();
-    // getWorldDirection de la cámara apunta hacia atrás (+Z local), se invierte
-    const x = camPos.x - dir.x * dist;
-    const z = camPos.z - dir.z * dist;
-    entity.object3D.position.set(x, camPos.y - .1, z);
-    entity.object3D.lookAt(camPos.x, camPos.y - .1, camPos.z);
-  }
-
-  // ---------- VENTANA DE INFORMACIÓN ----------
-  const infoPanel = makeFloatingPanel('infoPanel', 1.5, 1.15, true);
-  makeText(infoPanel, 'MEDIDAS  (toca el panel para cerrar)', '#5cecff', 1.9, 0, .5);
-  const infoBody = makeText(infoPanel, '', '#e5f4ff', 1.35, 0, .05);
-  makeButton(infoPanel, 'closeInfo', 'CERRAR', 0, -.47, .5, .14, '#fb7185');
-
-  function infoContent() {
-    const s = figureScale;
-    const f = v => (v * s).toFixed(2);
-    const sq = Math.sqrt;
-    switch (currentFigure) {
-      case 'cube':
-        return `CUBO\nLado (a): ${f(1.25)} u\nAristas: 12 (todas ${f(1.25)} u)\nCaras: 6 cuadrados de ${f(1.25)} u`;
-      case 'sphere':
-        return `ESFERA\nRadio (r): ${f(.76)} u\nDiametro: ${f(1.52)} u`;
-      case 'cylinder':
-        return `CILINDRO\nRadio (r): ${f(.62)} u\nDiametro: ${f(1.24)} u\nAltura (h): ${f(1.42)} u`;
-      case 'cone': {
-        const g = sq(.78 * .78 + 1.48 * 1.48);
-        return `CONO\nRadio (r): ${f(.78)} u\nAltura (h): ${f(1.48)} u\nGeneratriz (g): ${f(g)} u`;
-      }
-      default: {
-        const a = .82 * sq(2), h = 1.48;
-        const g = sq(h * h + (a / 2) ** 2);
-        const e = sq(h * h + .82 * .82);
-        return `PIRAMIDE\nLado de la base (a): ${f(a)} u\nAltura (h): ${f(h)} u\nApotema lateral (g): ${f(g)} u\nArista lateral: ${f(e)} u`;
-      }
-    }
-  }
-
-  function refreshInfo() {
-    if (infoPanel.getAttribute('visible')) infoBody.setAttribute('value', infoContent());
-  }
-
-  function toggleInfo(force) {
-    const show = force !== undefined ? force : !infoPanel.getAttribute('visible');
-    if (show) {
-      infoBody.setAttribute('value', infoContent());
-      placeInFront(infoPanel, 1.3);
-    } else {
-      infoPanel.object3D.position.set(0, -50, 0);
-    }
-    infoPanel.setAttribute('visible', show);
-    statusEl.textContent = show ? 'Medidas abiertas. Toca el panel o CERRAR para cerrarlo.' : 'Medidas cerradas.';
-  }
-
-  // ---------- CALCULADORA 3D ----------
-  const calcPanel = makeFloatingPanel('calcPanel', 1.0, 1.3);
-  calcPanel.firstChild.setAttribute('position', '0 .17 0');
-  makeText(calcPanel, 'CALCULADORA', '#5cecff', 1.8, 0, .74);
-
-  const dispBack = document.createElement('a-plane');
-  dispBack.setAttribute('width', '.86');
-  dispBack.setAttribute('height', '.15');
-  dispBack.setAttribute('position', '0 .58 .006');
-  dispBack.setAttribute('material', 'color: #021018; shader: flat');
-  calcPanel.appendChild(dispBack);
-  const calcDisplay = makeText(calcPanel, '0', '#7dffe8', 1.2, 0, .58);
-  calcDisplay.setAttribute('position', '0 .58 .012');
-
-  const calcRows = [
-    ['C', 'DEL', '(', ')'],
-    ['7', '8', '9', '/'],
-    ['4', '5', '6', '*'],
-    ['1', '2', '3', '-'],
-    ['0', '.', '=', '+']
-  ];
-  calcRows.forEach((row, r) => {
-    row.forEach((k, c) => {
-      const color = '/*-+='.includes(k) ? '#fbbf24' : (['C', 'DEL', '(', ')'].includes(k) ? '#a78bfa' : '#16bff4');
-      makeButton(calcPanel, 'k:' + k, k === '*' ? 'x' : k, -.3 + c * .2, .4 - r * .15, .18, .13, color, .8);
-    });
-  });
-  makeButton(calcPanel, 'closeCalc', 'CERRAR', 0, -.36, .8, .13, '#fb7185', 1);
-
-  let calcExpr = '';
-  let calcDone = false;
-
-  function calcShow(text) {
-    const t = text === '' ? '0' : String(text).replace(/\*/g, 'x');
-    calcDisplay.setAttribute('value', t.length > 16 ? t.slice(-16) : t);
-  }
-
-  function calcKey(k) {
-    const ops = '+-*/';
-    if (calcExpr === 'Error') calcExpr = '';
-
-    if (k === 'C') { calcExpr = ''; calcDone = false; }
-    else if (k === 'DEL') { calcExpr = calcExpr.slice(0, -1); calcDone = false; }
-    else if (k === '=') {
-      if (!calcExpr || !/^[0-9+\-*/.()\s]+$/.test(calcExpr)) { calcShow(calcExpr); return; }
-      try {
-        const v = Function('"use strict"; return (' + calcExpr + ')')();
-        calcExpr = Number.isFinite(v) ? String(parseFloat(v.toFixed(10))) : 'Error';
-      } catch (e) { calcExpr = 'Error'; }
-      calcDone = true;
-    }
-    else if (ops.includes(k)) {
-      calcDone = false;
-      if (!calcExpr) { if (k === '-') calcExpr = '-'; }
-      else if (ops.includes(calcExpr.slice(-1))) calcExpr = calcExpr.slice(0, -1) + k;
-      else calcExpr += k;
-    }
-    else {
-      if (calcDone && /[0-9.(]/.test(k)) calcExpr = '';
-      calcDone = false;
-      if (k === '.') {
-        const lastNum = calcExpr.split(/[+\-*/()]/).pop();
-        if (lastNum.includes('.')) return;
-      }
-      calcExpr += k;
-    }
-    calcShow(calcExpr);
-  }
-
-  function toggleCalc(force) {
-    const show = force !== undefined ? force : !calcPanel.getAttribute('visible');
-    if (show) placeInFront(calcPanel, 1.0);
-    else calcPanel.object3D.position.set(0, -50, 0);
-    calcPanel.setAttribute('visible', show);
-  }
-
-  // RAYO DE UN MANDO O MANO (en coordenadas del mundo)
   function rayOf(st) {
     st.c.getWorldPosition(xrO);
     st.c.getWorldQuaternion(xrQ);
@@ -815,7 +821,7 @@
   function xrTargets() {
     const list = [];
     figureRoot.object3D.traverse(o => {
-      if (o.isMesh && isVisible(o)) list.push(o);
+      if (o.isMesh && o.el && o.el.classList && isVisible(o) && findAncestor(o.el, 'figure-hit')) list.push(o);
     });
     document.querySelectorAll('.vr-button-hit').forEach(el => {
       const m = el.getObject3D('mesh');
@@ -824,7 +830,6 @@
     return list;
   }
 
-  // Que apunta el rayo: boton, figura o piso
   function pickFor(st) {
     rayOf(st);
     xrRay.set(xrO, xrD);
@@ -832,25 +837,20 @@
 
     let best = null;
     const hits = xrRay.intersectObjects(xrTargets(), false);
-
     if (hits.length) {
-      const el = hits[0].object.el;
-      const btn = findAncestor(el, 'vr-button');
-      best = btn
-        ? { type: 'button', btn, distance: hits[0].distance }
-        : { type: 'figure', distance: hits[0].distance };
+      const btn = findAncestor(hits[0].object.el, 'vr-button');
+      best = btn ? { type: 'button', btn, distance: hits[0].distance }
+                 : { type: 'figure', distance: hits[0].distance };
     }
 
     if (xrD.y < -.02) {
       const t = -xrO.y / xrD.y;
       if (t > 0 && t < 12 && (!best || t < best.distance)) {
         const p = xrO.clone().addScaledVector(xrD, t);
-        if (Math.abs(p.x) < ROOM.maxX && p.z > ROOM.minZ && p.z < ROOM.maxZ) {
+        if (Math.abs(p.x) < ROOM.maxX && p.z > ROOM.minZ && p.z < ROOM.maxZ)
           best = { type: 'floor', point: p, distance: t };
-        }
       }
     }
-
     return best;
   }
 
@@ -859,81 +859,77 @@
     const p = rig.object3D.position;
     const nx = p.x + (point.x - xrO.x);
     const nz = p.z + (point.z - xrO.z);
-
-    if (blockedAt(nx, nz)) {
-      statusEl.textContent = 'No puedes ir a ese lugar.';
-      return;
-    }
+    if (blockedAt(nx, nz)) { statusEl.textContent = 'No puedes ir a ese lugar.'; return; }
     rig.setAttribute('position', { x: nx, y: p.y, z: nz });
   }
 
+  function handsDistance() {
+    const [a, b] = xrControllers;
+    a.c.getWorldPosition(pA);
+    b.c.getWorldPosition(pB);
+    return pA.distanceTo(pB);
+  }
+
   function onSelectStart(st) {
+    st.pressed = true;
+
+    const other = xrControllers.find(s => s !== st);
+    if (heldBy && heldBy !== st && other && other.pressed && other.connected && st.connected) {
+      stretch = { d0: Math.max(handsDistance(), .05), s0: figureScale };
+      statusEl.textContent = 'Estirando con las dos manos: separa para agrandar, junta para reducir.';
+      return;
+    }
+
     const best = pickFor(st);
     if (!best) return;
 
-    if (best.type === 'button') {
-      pressButton(best.btn);
-    } else if (best.type === 'figure') {
-      const now = performance.now();
-      if (now - lastFigureTap < 450) {      // doble click
-        lastFigureTap = 0;
-        heldBy = null;
-        toggleInfo();
-        return;
-      }
-      lastFigureTap = now;
+    if (best.type === 'button') pressButton(best.btn);
+    else if (best.type === 'figure') {
       heldBy = st;
       grabDistance = THREE.MathUtils.clamp(best.distance, .8, 5);
-      statusEl.textContent = 'Figura agarrada. Doble click para ver medidas.';
-    } else {
-      teleportTo(best.point);
-    }
+      statusEl.textContent = 'Figura agarrada. Con la otra mano también para estirar.';
+    } else teleportTo(best.point);
   }
 
   function onSelectEnd(st) {
+    st.pressed = false;
+    if (stretch) {
+      stretch = null;
+      heldBy = null;
+      const v = valuesFor(currentFigure);
+      statusEl.textContent = 'Tamaño fijado: ' +
+        Object.keys(MEAS[currentFigure]).map(k => `${k} = ${v[k].toFixed(1)} cm`).join(' · ');
+      return;
+    }
     if (heldBy === st) {
       heldBy = null;
       statusEl.textContent = `${figureData[currentFigure].name} colocada.`;
     }
   }
 
-  // CREAR MANDOS / MANOS
   function setupXRController(i, xr) {
     const c = xr.getController(i);
     const grip = xr.getControllerGrip(i);
     const hand = xr.getHand(i);
-
     rig.object3D.add(c);
     rig.object3D.add(grip);
     rig.object3D.add(hand);
 
     const line = new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -3)
-      ]),
+      new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -3)]),
       new THREE.LineBasicMaterial({ color: 0x5cecff })
     );
     line.visible = false;
     c.add(line);
 
-    const dot = new THREE.Mesh(
-      new THREE.SphereGeometry(.025, 12, 12),
-      new THREE.MeshBasicMaterial({ color: 0x5cecff })
-    );
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(.025, 12, 12), new THREE.MeshBasicMaterial({ color: 0x5cecff }));
     dot.visible = false;
     scene.object3D.add(dot);
 
-    grip.add(new THREE.Mesh(
-      new THREE.BoxGeometry(.045, .045, .13),
-      new THREE.MeshBasicMaterial({ color: 0x9ad9ff })
-    ));
+    grip.add(new THREE.Mesh(new THREE.BoxGeometry(.045, .045, .13), new THREE.MeshBasicMaterial({ color: 0x9ad9ff })));
 
-    const st = {
-      c, hand, line, dot,
-      connected: false, isHand: false,
-      handedness: i === 0 ? 'left' : 'right',
-      gamepad: null
-    };
+    const st = { c, hand, line, dot, connected: false, isHand: false, pressed: false,
+      handedness: i === 0 ? 'left' : 'right', gamepad: null };
 
     c.addEventListener('connected', event => {
       const d = event.data || {};
@@ -941,28 +937,23 @@
       st.handedness = d.handedness || st.handedness;
       st.gamepad = d.gamepad || null;
       st.isHand = !!d.hand;
-
       const color = st.handedness === 'left' ? 0x5cecff : 0xa78bfa;
       line.material.color.setHex(color);
       dot.material.color.setHex(color);
       line.visible = true;
-
-      statusEl.textContent =
-        `${st.isHand ? 'Mano' : 'Mando'} ${st.handedness === 'left' ? 'izquierdo' : 'derecho'} detectado.`;
+      statusEl.textContent = `${st.isHand ? 'Mano' : 'Mando'} ${st.handedness === 'left' ? 'izquierdo' : 'derecho'} detectado.`;
     });
 
     c.addEventListener('disconnected', () => {
-      st.connected = false;
-      st.gamepad = null;
-      line.visible = false;
-      dot.visible = false;
+      st.connected = false; st.gamepad = null; st.pressed = false;
+      line.visible = false; dot.visible = false;
       if (heldBy === st) heldBy = null;
+      stretch = null;
     });
 
     c.addEventListener('selectstart', () => onSelectStart(st));
     c.addEventListener('selectend', () => onSelectEnd(st));
     c.addEventListener('squeezestart', () => cycleFigure(st.handedness === 'left' ? -1 : 1));
-
     xrControllers.push(st);
   }
 
@@ -976,48 +967,32 @@
   if (scene.hasLoaded) initXR();
   else scene.addEventListener('loaded', initXR, { once: true });
 
-  // Esferas en las articulaciones cuando se usan las manos
   const jointGeo = new THREE.SphereGeometry(1, 8, 8);
-
   function decorateHand(st) {
     const joints = st.hand.joints || {};
     for (const name in joints) {
       const j = joints[name];
       if (j.userData.dot) continue;
       j.userData.dot = true;
-      const m = new THREE.Mesh(jointGeo,
-        new THREE.MeshBasicMaterial({ color: st.handedness === 'left' ? 0x5cecff : 0xa78bfa }));
+      const m = new THREE.Mesh(jointGeo, new THREE.MeshBasicMaterial({ color: st.handedness === 'left' ? 0x5cecff : 0xa78bfa }));
       m.scale.setScalar(j.jointRadius || .01);
       j.add(m);
     }
   }
 
-  // ACTUALIZACION VR
   function xrUpdate(dt) {
-    const mv = { x: 0, y: 0 };
-    const tr = { x: 0, y: 0 };
+    const mv = { x: 0, y: 0 }, tr = { x: 0, y: 0 };
 
     for (const st of xrControllers) {
       if (!st.connected) continue;
       if (st.isHand) decorateHand(st);
-
-      // botones A/B/X/Y: cierran la ventana de medidas
-      if (st.gamepad && st.gamepad.buttons) {
-        const b = st.gamepad.buttons;
-        const pressed = !!((b[4] && b[4].pressed) || (b[5] && b[5].pressed));
-        if (pressed && !st.prevFace && infoPanel.getAttribute('visible')) toggleInfo(false);
-        st.prevFace = pressed;
-      }
-
       if (st.gamepad && st.gamepad.axes) {
         const ax = st.gamepad.axes;
         let x = ax.length >= 4 ? ax[2] : ax[0];
         let y = ax.length >= 4 ? ax[3] : ax[1];
         if (Math.abs(x) < .15) x = 0;
         if (Math.abs(y) < .15) y = 0;
-
-        if (st.handedness === 'left') { mv.x = x; mv.y = y; }
-        else { tr.x = x; tr.y = y; }
+        if (st.handedness === 'left') { mv.x = x; mv.y = y; } else { tr.x = x; tr.y = y; }
       }
     }
 
@@ -1026,12 +1001,8 @@
       forward.y = 0;
       if (forward.lengthSq() > 0) forward.normalize();
       right.set(-forward.z, 0, forward.x).normalize();
-
       const fa = -mv.y;
-      movePlayer(
-        (right.x * mv.x + forward.x * fa) * 2.4 * dt,
-        (right.z * mv.x + forward.z * fa) * 2.4 * dt
-      );
+      movePlayer((right.x * mv.x + forward.x * fa) * 2.4 * dt, (right.z * mv.x + forward.z * fa) * 2.4 * dt);
     }
 
     if (tr.x) {
@@ -1039,60 +1010,51 @@
       rig.setAttribute('rotation', { x: r.x, y: r.y - tr.x * 1.8 * dt * 60, z: r.z });
     }
 
-    if (heldBy && heldBy.connected) {
-      if (heldBy.handedness === 'right' && tr.y) {
+    if (stretch && xrControllers.length === 2 && xrControllers.every(s => s.connected)) {
+      setFigureScale(stretch.s0 * handsDistance() / stretch.d0);
+    } else if (heldBy && heldBy.connected) {
+      if (heldBy.handedness === 'right' && tr.y)
         grabDistance = THREE.MathUtils.clamp(grabDistance - tr.y * 1.6 * dt, .8, 5);
-      }
       rayOf(heldBy);
       placeFigure(xrO.clone().addScaledVector(xrD, grabDistance));
     }
 
     for (const st of xrControllers) {
       if (!st.connected) continue;
-
       const pick = pickFor(st);
       let len = 3;
-
       if (heldBy === st) len = grabDistance;
       else if (pick) len = Math.min(pick.distance, 8);
-
       const pos = st.line.geometry.attributes.position;
       pos.setZ(1, -len);
       pos.needsUpdate = true;
       st.line.visible = true;
-
       st.dot.position.copy(xrO).addScaledVector(xrD, len);
       st.dot.visible = !!pick || heldBy === st;
     }
   }
 
-  // TECLADO (ESCRITORIO)
+  // TECLADO
   const keys = new Set();
-  window.addEventListener('keydown', event => keys.add(event.key.toLowerCase()));
-  window.addEventListener('keyup', event => keys.delete(event.key.toLowerCase()));
+  window.addEventListener('keydown', e => keys.add(e.key.toLowerCase()));
+  window.addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
 
   scene.addEventListener('enter-vr', () => {
     vrPanels.setAttribute('visible', true);
-    statusEl.textContent =
-      'VR activa: apunta y presiona el gatillo o pellizca. Doble gatillo sobre la figura: medidas.';
+    statusEl.textContent = 'VR activa: agarra la figura con ambas manos y sepáralas para agrandarla.';
   });
 
   scene.addEventListener('exit-vr', () => {
     vrPanels.setAttribute('visible', false);
-    heldBy = null;
-    xrControllers.forEach(st => { st.dot.visible = false; });
+    heldBy = null; stretch = null;
+    xrControllers.forEach(st => { st.dot.visible = false; st.pressed = false; });
     statusEl.textContent = 'Modo normal: usa WASD para moverte.';
   });
 
   function updateControls(dt) {
-    if (scene.is('vr-mode')) {
-      xrUpdate(dt);
-      return;
-    }
+    if (scene.is('vr-mode')) { xrUpdate(dt); return; }
 
-    const f =
-      (keys.has('w') || keys.has('arrowup') ? 1 : 0) -
-      (keys.has('s') || keys.has('arrowdown') ? 1 : 0);
+    const f = (keys.has('w') || keys.has('arrowup') ? 1 : 0) - (keys.has('s') || keys.has('arrowdown') ? 1 : 0);
     const sx = (keys.has('d') ? 1 : 0) - (keys.has('a') ? 1 : 0);
 
     if (f || sx) {
@@ -1100,11 +1062,7 @@
       forward.y = 0;
       if (forward.lengthSq() > 0) forward.normalize();
       right.set(-forward.z, 0, forward.x).normalize();
-
-      movePlayer(
-        (right.x * sx + forward.x * f) * 2.4 * dt,
-        (right.z * sx + forward.z * f) * 2.4 * dt
-      );
+      movePlayer((right.x * sx + forward.x * f) * 2.4 * dt, (right.z * sx + forward.z * f) * 2.4 * dt);
     }
 
     const turn = (keys.has('e') ? 1 : 0) - (keys.has('q') ? 1 : 0);
@@ -1117,26 +1075,19 @@
   AFRAME.registerComponent('geolab-loop', {
     tick(time, delta) {
       updateControls(Math.min(delta / 1000, .05));
+      updateLabels();
     }
   });
   scene.setAttribute('geolab-loop', '');
 
-  // SELECCION CON RATON (doble click sobre la figura = medidas)
-  let lastMouseTap = 0;
+  // Clic con ratón sobre botones 3D (solo si están visibles)
   scene.addEventListener('click', event => {
     const button = findAncestor(event.target, 'vr-button');
-    if (button) { pressButton(button); return; }
-
-    if (findAncestor(event.target, 'figure-hit')) {
-      const now = performance.now();
-      if (now - lastMouseTap < 450) { toggleInfo(); lastMouseTap = 0; }
-      else lastMouseTap = now;
-    }
+    if (button && isVisible(button.object3D)) pressButton(button);
   });
 
   // INICIAR
   selectFigure('cube');
-  renderCalcFields();
   showSection('start');
 </script>
 
