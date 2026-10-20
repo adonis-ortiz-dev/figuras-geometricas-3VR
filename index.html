@@ -40,7 +40,9 @@
     .calc { margin-top: 12px; padding: 12px; border: 1px solid #45d9ff88; border-radius: 14px; background: #02101c; box-shadow: inset 0 0 20px #00c8ff22; }
     .lcd { font-family: monospace; background: #031c17; color: #5dffb0; padding: 10px; border-radius: 8px; min-height: 96px; white-space: pre; font-size: .8rem; line-height: 1.55; overflow-x: auto; border: 1px solid #1ac6bd77; }
     .calc-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: -12px -12px 10px; padding: 9px 12px; border-radius: 14px 14px 0 0; background: linear-gradient(135deg, #0a3a58, #12307a); cursor: grab; user-select: none; -webkit-user-select: none; touch-action: none; }
-    .calc-bar.dragging { cursor: grabbing; }
+    .calc-bar.dragging, .calc.floating:active { cursor: grabbing; }
+    .calc { cursor: grab; touch-action: none; }
+    .calc .keys, .calc .lcd, .calc p { cursor: default; }
     .calc-grip { color: #9cecff; letter-spacing: 2px; font-size: .9rem; line-height: 1; }
     .calc.floating { position: fixed; z-index: 30; margin: 0; box-shadow: 0 0 24px #00c8ff44, 0 16px 40px #000a; }
     .keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
@@ -513,7 +515,7 @@
 
   const CALC = { open: false, vals: [''], idx: 0, msg: '' };
   const calcTexts = [];
-  let calcBar3d = null;
+  const calcGrabs = [];
   const calc3d = document.getElementById('calc3d');
 
   function buildCalc3D() {
@@ -523,9 +525,13 @@
       parent.appendChild(el);
       return el;
     };
-    mk('a-plane', { width: 1.6, height: 2.05, position: '0 .125 -.01', material: 'shader: flat; color: #12dfff' });
+    // Marco (borde) de la calculadora: al mantener presionado el borde se puede mover
+    const FR = 'shader: flat; color: #12dfff';
+    [[1.76, .12, 0, 1.17], [1.76, .12, 0, -.92], [.12, 2.21, -.82, .125], [.12, 2.21, .82, .125]].forEach(([w, h, x, y]) => {
+      calcGrabs.push(mk('a-plane', { width: w, height: h, position: `${x} ${y} -.01`, material: FR, class: 'calc-grab' }));
+    });
     mk('a-plane', { width: 1.52, height: 1.97, position: '0 .125 -.005', material: 'shader: flat; color: #04122a' });
-    calcBar3d = mk('a-plane', { width: 1.36, height: .2, position: '0 1.02 .002', material: 'shader: flat; color: #0d3f63' });
+    calcGrabs.push(mk('a-plane', { width: 1.36, height: .2, position: '0 1.02 .002', material: 'shader: flat; color: #0d3f63', class: 'calc-grab' }));
     mk('a-text', { value: 'CALCULADORA', align: 'center', color: '#20eaff', width: 2.4, position: '0 1.0 .01' });
     mk('a-text', { value: '::', align: 'right', color: '#9cecff', width: 2.2, position: '.64 1.0 .01' });
     mk('a-plane', { width: 1.36, height: .68, position: '0 .62 0', material: 'shader: flat; color: #031c17' });
@@ -639,7 +645,8 @@
       box.style.top = y + 'px';
     };
 
-    bar.addEventListener('pointerdown', e => {
+    box.addEventListener('pointerdown', e => {
+      if (e.target !== box && !bar.contains(e.target)) return;   // solo el borde o el encabezado
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       const r = box.getBoundingClientRect();
       if (!box.classList.contains('floating')) {
@@ -650,10 +657,10 @@
       }
       d = { x: e.clientX, y: e.clientY, left: parseFloat(box.style.left), top: parseFloat(box.style.top) };
       bar.classList.add('dragging');
-      bar.setPointerCapture(e.pointerId);
+      box.setPointerCapture(e.pointerId);
       e.preventDefault();
     });
-    bar.addEventListener('pointermove', e => {
+    box.addEventListener('pointermove', e => {
       if (!d) return;
       box.style.left = (d.left + e.clientX - d.x) + 'px';
       box.style.top = (d.top + e.clientY - d.y) + 'px';
@@ -663,10 +670,10 @@
       if (!d) return;
       d = null;
       bar.classList.remove('dragging');
-      try { bar.releasePointerCapture(e.pointerId); } catch (_) {}
+      try { box.releasePointerCapture(e.pointerId); } catch (_) {}
     };
-    bar.addEventListener('pointerup', end);
-    bar.addEventListener('pointercancel', end);
+    box.addEventListener('pointerup', end);
+    box.addEventListener('pointercancel', end);
     addEventListener('resize', clampBox);
   })();
 
@@ -686,11 +693,11 @@
       ray.setFromCamera(ndc, camera.getObject3D('camera'));
     };
     const overBar = e => {
-      if (!CALC.open || !calcBar3d || scene.is('vr-mode') || e.target !== canvasOf()) return false;
-      const m = calcBar3d.getObject3D('mesh');
-      if (!m) return false;
+      if (!CALC.open || scene.is('vr-mode') || e.target !== canvasOf()) return false;
+      const ms = calcGrabs.map(g => g.getObject3D('mesh')).filter(Boolean);
+      if (!ms.length) return false;
       setNdc(e);
-      return ray.intersectObject(m, false)[0] || false;
+      return ray.intersectObjects(ms, false)[0] || false;
     };
 
     addEventListener('mousedown', e => {
@@ -837,6 +844,8 @@
 
   let heldBy = null;
   let stretch = null;
+  let calcDrag = null;
+  const _cw = new THREE.Vector3();
   let grabDistance = 2.1;
   const xrControllers = [];
 
@@ -955,6 +964,10 @@
       const m = el.getObject3D('mesh');
       if (m && isVisible(m)) list.push(m);
     });
+    if (CALC.open) calcGrabs.forEach(g => {
+      const m = g.getObject3D('mesh');
+      if (m && isVisible(m)) list.push(m);
+    });
     return list;
   }
 
@@ -967,8 +980,10 @@
     const hits = xrRay.intersectObjects(xrTargets(), false);
     if (hits.length) {
       const btn = findAncestor(hits[0].object.el, 'vr-button');
+      const isGrab = hits[0].object.el.classList.contains('calc-grab');
       best = btn ? { type: 'button', btn, distance: hits[0].distance }
-                 : { type: 'figure', distance: hits[0].distance };
+           : isGrab ? { type: 'calc', distance: hits[0].distance }
+           : { type: 'figure', distance: hits[0].distance };
     }
 
     if (xrD.y < -.02) {
@@ -1012,7 +1027,13 @@
     if (!best) return;
 
     if (best.type === 'button') pressButton(best.btn);
-    else if (best.type === 'figure') {
+    else if (best.type === 'calc') {
+      calc3d.object3D.getWorldPosition(_cw);
+      const d = THREE.MathUtils.clamp(best.distance, .5, 6);
+      const off = _cw.clone().sub(xrO.clone().addScaledVector(xrD, d));
+      calcDrag = { st, dist: d, off };
+      statusEl.textContent = 'Moviendo la calculadora: suelta el gatillo para dejarla ahí.';
+    } else if (best.type === 'figure') {
       const now = performance.now();
       if (now - lastFigureTap < 450) {
         lastFigureTap = 0;
@@ -1029,6 +1050,10 @@
 
   function onSelectEnd(st) {
     st.pressed = false;
+    if (calcDrag && calcDrag.st === st) {
+      calcDrag = null;
+      statusEl.textContent = 'Calculadora colocada.';
+    }
     if (stretch) {
       stretch = null;
       heldBy = null;
@@ -1155,18 +1180,29 @@
       placeFigure(xrO.clone().addScaledVector(xrD, grabDistance));
     }
 
+    if (calcDrag) {
+      if (calcDrag.st.connected) {
+        if (calcDrag.st.handedness === 'right' && tr.y)
+          calcDrag.dist = THREE.MathUtils.clamp(calcDrag.dist - tr.y * 1.6 * dt, .5, 6);
+        rayOf(calcDrag.st);
+        _cw.copy(xrO).addScaledVector(xrD, calcDrag.dist).add(calcDrag.off);
+        calc3d.object3D.position.copy(calc3d.object3D.parent.worldToLocal(_cw));
+      } else calcDrag = null;
+    }
+
     for (const st of xrControllers) {
       if (!st.connected) continue;
       const pick = pickFor(st);
       let len = 3;
       if (heldBy === st) len = grabDistance;
+      else if (calcDrag && calcDrag.st === st) len = calcDrag.dist;
       else if (pick) len = Math.min(pick.distance, 8);
       const pos = st.line.geometry.attributes.position;
       pos.setZ(1, -len);
       pos.needsUpdate = true;
       st.line.visible = true;
       st.dot.position.copy(xrO).addScaledVector(xrD, len);
-      st.dot.visible = !!pick || heldBy === st;
+      st.dot.visible = !!pick || heldBy === st || (calcDrag && calcDrag.st === st);
     }
   }
 
@@ -1182,7 +1218,7 @@
 
   scene.addEventListener('exit-vr', () => {
     vrPanels.setAttribute('visible', false);
-    heldBy = null; stretch = null;
+    heldBy = null; stretch = null; calcDrag = null;
     xrControllers.forEach(st => { st.dot.visible = false; st.pressed = false; });
     statusEl.textContent = 'Modo normal: usa WASD para moverte.';
   });
