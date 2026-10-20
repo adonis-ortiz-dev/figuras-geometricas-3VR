@@ -629,6 +629,26 @@
     }
   }
 
+  // ================= CALCULADORA SIEMPRE DE FRENTE AL USUARIO (billboard) =================
+  // Gira solo sobre el eje vertical (queda derecha, sin volcarse) y no cambia su posición.
+  const _cc = new THREE.Vector3(), _cu = new THREE.Vector3();
+  let calcFaceInit = false;
+  function updateCalcFacing(dt) {
+    if (!CALC.open) { calcFaceInit = false; return; }
+    const o = calc3d.object3D;
+    o.getWorldPosition(_cc);
+    camera.object3D.getWorldPosition(_cu);
+    const dx = _cu.x - _cc.x, dz = _cu.z - _cc.z;
+    if (dx * dx + dz * dz < 1e-6) return;
+    const rigYaw = rig.object3D.rotation.y;                   // la cámara y la calculadora cuelgan del mismo rig
+    const target = Math.atan2(dx, dz) - rigYaw;
+    let cur = o.rotation.y;
+    let diff = Math.atan2(Math.sin(target - cur), Math.cos(target - cur));   // camino más corto
+    cur = calcFaceInit ? cur + diff * Math.min(1, 12 * dt) : target;
+    calcFaceInit = true;
+    o.rotation.set(-.17, cur, 0);                              // leve inclinación hacia el usuario
+  }
+
   // ================= MOVER LA CALCULADORA (arrastrando su encabezado) =================
   // 1) Calculadora de la página: ventana flotante que se arrastra con el encabezado.
   (function () {
@@ -1249,6 +1269,7 @@
       updateControls(Math.min(delta / 1000, .05));
       updatePhysics(Math.min(delta / 1000, .05));
       updateFloat(Math.min(delta / 1000, .05));
+      updateCalcFacing(Math.min(delta / 1000, .05));
       updateLabels();
     }
   });
