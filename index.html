@@ -39,6 +39,10 @@
     .result { margin-top: 10px; padding: 11px; background: #062a36; border: 1px solid #1ac6bd55; border-radius: 10px; line-height: 1.5; }
     .calc { margin-top: 12px; padding: 12px; border: 1px solid #45d9ff88; border-radius: 14px; background: #02101c; box-shadow: inset 0 0 20px #00c8ff22; }
     .lcd { font-family: monospace; background: #031c17; color: #5dffb0; padding: 10px; border-radius: 8px; min-height: 96px; white-space: pre; font-size: .8rem; line-height: 1.55; overflow-x: auto; border: 1px solid #1ac6bd77; }
+    .calc-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: -12px -12px 10px; padding: 9px 12px; border-radius: 14px 14px 0 0; background: linear-gradient(135deg, #0a3a58, #12307a); cursor: grab; user-select: none; -webkit-user-select: none; touch-action: none; }
+    .calc-bar.dragging { cursor: grabbing; }
+    .calc-grip { color: #9cecff; letter-spacing: 2px; font-size: .9rem; line-height: 1; }
+    .calc.floating { position: fixed; z-index: 30; margin: 0; box-shadow: 0 0 24px #00c8ff44, 0 16px 40px #000a; }
     .keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
     .keys button { padding: 11px 0; }
     #status {
@@ -133,9 +137,7 @@
     width="9.8" scale="1.18 1.18 1.18" font="mozillavr"
     material="shader: flat; emissive: #d8c8ff"></a-text>
 
-  <a-text value="Este espacio fue creado por 2° Desarrollo de Software"
-    position="0 3.5 -7.61" align="center" color="#e5f4ff"
-    width="10.8" scale=".88 .88 .88"></a-text>
+  
 
   <!-- CUADRO DE INTEGRANTES -->
   <a-box position="0 2.4 -7.665" width="11.3" height="1.75" depth=".03" color="#0a1030"
@@ -163,6 +165,7 @@
 
   <!-- FIGURAS 3D (1 cm = 0.25 unidades) -->
   <a-entity id="figure" position="0 1.65 -3">
+    <a-entity id="floatWrap">
     <a-box id="cube" class="figure-hit" width="1.25" height="1.25" depth="1.25" color="#32c8ff"
       material="metalness: .28; roughness: .2; emissive: #087ba8; emissiveIntensity: .25"></a-box>
     <a-sphere id="sphere" class="figure-hit" radius=".75" color="#ffb547"
@@ -177,12 +180,10 @@
         material="metalness: .22; roughness: .22; emissive: #991b43; emissiveIntensity: .2"></a-cone>
     </a-entity>
     <a-entity id="dimsRoot"></a-entity>
+    </a-entity>
   </a-entity>
 
   <a-entity id="labelsRoot"></a-entity>
-
-  <!-- PANTALLA 3D DE LA CALCULADORA (cerca del usuario) -->
-  <a-entity id="calc3d" position="1.1 1.4 0.2" rotation="0 -45 0" visible="false"></a-entity>
 
   <!-- CÁMARA Y VR -->
   <a-entity id="cameraRig" position="0 0 1.25">
@@ -191,6 +192,8 @@
         raycaster="objects: .figure-hit, .vr-button-hit; far: 12"
         material="color: #d9fbff; shader: flat"></a-entity>
     </a-camera>
+    <!-- PANTALLA 3D DE LA CALCULADORA: junto al menú ACCIONES (a su derecha), sin taparlo -->
+    <a-entity id="calc3d" position="1.75 1.15 -1" rotation="-10 -38 0" scale=".7 .7 .7" visible="false"></a-entity>
     <a-entity id="vrPanels" visible="false">
       <a-entity id="panelFigures" position="-.8 1.15 -.7" rotation="-20 22 0"></a-entity>
       <a-entity id="panelActions" position=".8 1.15 -.7" rotation="-20 -22 0"></a-entity>
@@ -219,6 +222,8 @@
       <button class="secondary" onclick="enterVR()">Entrar a VR</button>
     </div>
 
+    <button id="floatBtn" class="wide secondary" style="margin-bottom:10px" onclick="toggleFloat()">FLOTAR: OFF</button>
+
     <section id="start">
       <h2>Elegí una figura</h2>
       <div class="buttons">
@@ -227,6 +232,7 @@
         <button data-shape="cylinder" onclick="selectFigure('cylinder')">Cilindro</button>
         <button data-shape="cone" onclick="selectFigure('cone')">Cono</button>
         <button data-shape="pyramid" onclick="selectFigure('pyramid')">Pirámide</button>
+        <button id="volverBtn" class="secondary" onclick="volver()">⟵ VOLVER</button>
       </div>
 
       <h2 id="figureName">Cubo</h2>
@@ -253,11 +259,16 @@
 
       <p class="small">Meta Quest (mandos o manos): apunta con el rayo y presiona el gatillo (o pellizca) para agarrar la figura o pulsar botones. <b>Para agrandar o reducir: agarra la figura con las dos manos a la vez y sepáralas (aumenta) o júntalas (reduce); las medidas en cm se actualizan en tiempo real.</b> Joystick izquierdo camina, derecho gira, o apunta al piso y pellizca para teletransportarte. Grip: cambia de figura.</p>
       <p class="small">Computadora: WASD para caminar, Q/E para girar, y el control deslizante para cambiar el tamaño.</p>
+      <p class="small"><b>Físicas:</b> haz doble clic sobre la figura seleccionada (en VR: doble gatillo o doble pellizco sobre la figura) para activarlas. La figura cae, rebota y rueda; con un clic la empujas y en VR puedes lanzarla con la mano. Otro doble clic las desactiva y devuelve la figura a la plataforma.</p>
+      <p class="small"><b>Flotar:</b> el botón FLOTAR (también en el panel ACCIONES de VR) hace levitar la figura seleccionada; púlsalo otra vez para detener el efecto. Si activas las físicas, la flotación se desactiva sola.</p>
 
       <!-- CALCULADORA (hasta abajo de Figuras) -->
       <button id="calcBtn" class="wide" onclick="toggleCalc()">Calculadora</button>
       <div id="calcScreen" class="calc hidden">
-        <div class="eyebrow">Calculadora de área y volumen</div>
+        <div class="calc-bar" id="calcBar" title="Arrastra para mover la calculadora">
+          <span class="eyebrow">Calculadora de área y volumen</span>
+          <span class="calc-grip">⠿</span>
+        </div>
         <div class="lcd" id="lcd"></div>
         <div class="keys" id="keys"></div>
         <p class="small">SIG: siguiente dato · MED: usar las medidas actuales de la figura · También aparece como pantalla 3D cerca de ti.</p>
@@ -291,8 +302,8 @@
     'Adonis Fernando Ortiz Arévalo',
     'Oscar Rafael Melgar Macal',
     'Cristian Valdemar Alas Melgar',
-    'Rosmery Saraí Miranda Salazar',
-    'Blanca Abigail Erazo Martínez',
+    'Rosmery Sarai Miranda Salazar',
+    'Blanca Abigail Erazo Martinez',
     'Yuditza Maribel Maldonado Tzul'
   ];
   TEAM.forEach((name, i) => {
@@ -502,6 +513,7 @@
 
   const CALC = { open: false, vals: [''], idx: 0, msg: '' };
   const calcTexts = [];
+  let calcBar3d = null;
   const calc3d = document.getElementById('calc3d');
 
   function buildCalc3D() {
@@ -513,7 +525,9 @@
     };
     mk('a-plane', { width: 1.6, height: 2.05, position: '0 .125 -.01', material: 'shader: flat; color: #12dfff' });
     mk('a-plane', { width: 1.52, height: 1.97, position: '0 .125 -.005', material: 'shader: flat; color: #04122a' });
+    calcBar3d = mk('a-plane', { width: 1.36, height: .2, position: '0 1.02 .002', material: 'shader: flat; color: #0d3f63' });
     mk('a-text', { value: 'CALCULADORA', align: 'center', color: '#20eaff', width: 2.4, position: '0 1.0 .01' });
+    mk('a-text', { value: '::', align: 'right', color: '#9cecff', width: 2.2, position: '.64 1.0 .01' });
     mk('a-plane', { width: 1.36, height: .68, position: '0 .62 0', material: 'shader: flat; color: #031c17' });
     [.84, .7, .56, .42].forEach(y => {
       calcTexts.push(mk('a-text', { value: '', align: 'left', color: '#5dffb0', width: 1.7, position: `-.64 ${y} .01` }));
@@ -609,6 +623,114 @@
     }
   }
 
+  // ================= MOVER LA CALCULADORA (arrastrando su encabezado) =================
+  // 1) Calculadora de la página: ventana flotante que se arrastra con el encabezado.
+  (function () {
+    const box = document.getElementById('calcScreen');
+    const bar = document.getElementById('calcBar');
+    let d = null;
+
+    const clampBox = () => {
+      if (!box.classList.contains('floating')) return;
+      const w = box.offsetWidth;
+      const x = Math.min(Math.max(0, parseFloat(box.style.left) || 0), Math.max(0, innerWidth - w));
+      const y = Math.min(Math.max(0, parseFloat(box.style.top) || 0), Math.max(0, innerHeight - 48));
+      box.style.left = x + 'px';
+      box.style.top = y + 'px';
+    };
+
+    bar.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      const r = box.getBoundingClientRect();
+      if (!box.classList.contains('floating')) {
+        box.style.width = r.width + 'px';
+        box.style.left = r.left + 'px';
+        box.style.top = r.top + 'px';
+        box.classList.add('floating');
+      }
+      d = { x: e.clientX, y: e.clientY, left: parseFloat(box.style.left), top: parseFloat(box.style.top) };
+      bar.classList.add('dragging');
+      bar.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    bar.addEventListener('pointermove', e => {
+      if (!d) return;
+      box.style.left = (d.left + e.clientX - d.x) + 'px';
+      box.style.top = (d.top + e.clientY - d.y) + 'px';
+      clampBox();
+    });
+    const end = e => {
+      if (!d) return;
+      d = null;
+      bar.classList.remove('dragging');
+      try { bar.releasePointerCapture(e.pointerId); } catch (_) {}
+    };
+    bar.addEventListener('pointerup', end);
+    bar.addEventListener('pointercancel', end);
+    addEventListener('resize', clampBox);
+  })();
+
+  // 2) Pantalla 3D de la calculadora: se arrastra con el botón izquierdo desde su barra superior.
+  (function () {
+    const ray = new THREE.Raycaster();
+    const ndc = new THREE.Vector2();
+    const plane = new THREE.Plane();
+    const nrm = new THREE.Vector3(), calcW = new THREE.Vector3(), hit = new THREE.Vector3();
+    const off = new THREE.Vector3(), tmp = new THREE.Vector3(), ndcP = new THREE.Vector3();
+    let drag = false, hover = false;
+
+    const canvasOf = () => scene.canvas;
+    const setNdc = e => {
+      const r = canvasOf().getBoundingClientRect();
+      ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+      ray.setFromCamera(ndc, camera.getObject3D('camera'));
+    };
+    const overBar = e => {
+      if (!CALC.open || !calcBar3d || scene.is('vr-mode') || e.target !== canvasOf()) return false;
+      const m = calcBar3d.getObject3D('mesh');
+      if (!m) return false;
+      setNdc(e);
+      return ray.intersectObject(m, false)[0] || false;
+    };
+
+    addEventListener('mousedown', e => {
+      if (e.button !== 0) return;
+      const h = overBar(e);
+      if (!h) return;
+      // Evita que el clic llegue al cursor, a la cámara (look-controls) o a otras funciones
+      e.stopPropagation();
+      e.preventDefault();
+      calc3d.object3D.getWorldPosition(calcW);
+      camera.object3D.getWorldDirection(nrm);
+      plane.setFromNormalAndCoplanarPoint(nrm, calcW);
+      off.copy(h.point).sub(calcW);
+      drag = true;
+      canvasOf().style.cursor = 'grabbing';
+    }, true);
+
+    addEventListener('mousemove', e => {
+      if (drag) {
+        e.stopPropagation();
+        setNdc(e);
+        if (!ray.ray.intersectPlane(plane, hit)) return;
+        tmp.copy(hit).sub(off);
+        ndcP.copy(tmp).project(camera.getObject3D('camera'));
+        if (Math.abs(ndcP.x) > .96 || Math.abs(ndcP.y) > .96) return;   // se mantiene dentro de la pantalla
+        calc3d.object3D.parent.worldToLocal(tmp);
+        calc3d.object3D.position.copy(tmp);
+        return;
+      }
+      const over = !!overBar(e);
+      if (over !== hover) { hover = over; canvasOf().style.cursor = over ? 'grab' : ''; }
+    }, true);
+
+    addEventListener('mouseup', e => {
+      if (!drag) return;
+      drag = false;
+      canvasOf().style.cursor = hover ? 'grab' : '';
+    }, true);
+  })();
+
   buildCalc3D();
   buildCalcHTML();
 
@@ -620,6 +742,7 @@
 
   function selectFigure(id) {
     if (!figureData[id]) return;
+    if (PH.on && id !== currentFigure) stopPhysics(true);
     currentFigure = id;
     ['cube', 'sphere', 'cylinder', 'cone', 'pyramid'].forEach(key =>
       document.getElementById(key).setAttribute('visible', key === id));
@@ -638,6 +761,7 @@
   }
 
   function moveFigure(dx, dy, dz) {
+    if (PH.on) { PH.vel.x += dx * 10; PH.vel.y += dy * 10 + 1.5; PH.vel.z += dz * 10; return; }
     const p = figureRoot.getAttribute('position');
     figureRoot.setAttribute('position', {
       x: Math.max(-5.8, Math.min(5.8, p.x + dx)),
@@ -647,6 +771,7 @@
   }
 
   function rotateFigure(deg) {
+    if (PH.on) { PH.w.y += Math.sign(deg) * 5; return; }
     const r = figureRoot.getAttribute('rotation');
     figureRoot.setAttribute('rotation', { x: r.x, y: r.y + deg, z: r.z });
   }
@@ -659,6 +784,9 @@
   function scaleFigure(f) { setFigureScale(figureScale * f); }
 
   function resetFigure() {
+    stopPhysics(false);
+    figureRoot.object3D.position.set(figureHome.x, figureHome.y, figureHome.z);
+    figureRoot.object3D.rotation.set(0, 0, 0);
     figureRoot.setAttribute('position', figureHome);
     figureRoot.setAttribute('rotation', '0 0 0');
     setFigureScale(1);
@@ -741,7 +869,9 @@
   }
 
   function runAction(action) {
-    if (action.startsWith('k:')) calcPress(action.slice(2));
+    if (action === 'volver') volver();
+    else if (action === 'float') toggleFloat();
+    else if (action.startsWith('k:')) calcPress(action.slice(2));
     else if (action === 'calc') toggleCalc();
     else if (figureData[action]) selectFigure(action);
     else if (action === 'rotL') rotateFigure(-15);
@@ -762,8 +892,8 @@
     const parent = document.getElementById(parentId);
     const back = document.createElement('a-plane');
     back.setAttribute('width', '.64');
-    back.setAttribute('height', '1.33');
-    back.setAttribute('position', '0 -.045 -.012');
+    back.setAttribute('height', '1.5');
+    back.setAttribute('position', '0 -.13 -.012');
     back.setAttribute('material', 'color: #04122a; opacity: .88; transparent: true; shader: flat');
     parent.appendChild(back);
 
@@ -802,12 +932,12 @@
   buildPanel('panelFigures', 'FIGURAS', '#5cecff', [
     ['cube', 'CUBO', '#16bff4'], ['sphere', 'ESFERA', '#ffb547'],
     ['cylinder', 'CILINDRO', '#51f0c0'], ['cone', 'CONO', '#e879f9'],
-    ['pyramid', 'PIRAMIDE', '#fb7185']
+    ['pyramid', 'PIRAMIDE', '#fb7185'], ['volver', 'VOLVER', '#f43f5e']
   ]);
   buildPanel('panelActions', 'ACCIONES', '#c4b5fd', [
     ['rotL', 'GIRAR <', '#38bdf8'], ['rotR', 'GIRAR >', '#38bdf8'],
     ['smaller', 'REDUCIR', '#fbbf24'], ['bigger', 'AUMENTAR', '#fbbf24'],
-    ['center', 'CENTRAR', '#a78bfa'], ['calc', 'CALCULADORA', '#34d399']
+    ['center', 'CENTRAR', '#a78bfa'], ['calc', 'CALCULADORA', '#34d399'], ['float', 'FLOTAR: OFF', '#22d3ee']
   ]);
 
   function rayOf(st) {
@@ -883,6 +1013,14 @@
 
     if (best.type === 'button') pressButton(best.btn);
     else if (best.type === 'figure') {
+      const now = performance.now();
+      if (now - lastFigureTap < 450) {
+        lastFigureTap = 0;
+        heldBy = null;
+        togglePhysics();
+        return;
+      }
+      lastFigureTap = now;
       heldBy = st;
       grabDistance = THREE.MathUtils.clamp(best.distance, .8, 5);
       statusEl.textContent = 'Figura agarrada. Con la otra mano también para estirar.';
@@ -1073,6 +1211,8 @@
   AFRAME.registerComponent('geolab-loop', {
     tick(time, delta) {
       updateControls(Math.min(delta / 1000, .05));
+      updatePhysics(Math.min(delta / 1000, .05));
+      updateFloat(Math.min(delta / 1000, .05));
       updateLabels();
     }
   });
@@ -1082,6 +1222,244 @@
     const button = findAncestor(event.target, 'vr-button');
     if (button && isVisible(button.object3D)) pressButton(button);
   });
+
+  // ================= FÍSICAS (doble clic sobre la figura seleccionada) =================
+  const PH = {
+    on: false, vel: new THREE.Vector3(), w: new THREE.Vector3(),
+    prev: new THREE.Vector3(), hasPrev: false, grounded: false
+  };
+  const PH_GRAVITY = 9.8, PH_REST = .55;
+  const PLAT = { x: 0, z: -3, r: 1.03, top: .36 };
+  const _pv = new THREE.Vector3();
+  let lastFigureTap = 0;
+  let lastClickTime = 0;
+
+  function phHalfHeight() {
+    return (currentFigure === 'cube' ? .625 : .75) * figureScale;
+  }
+  function phRadius() {
+    const r = { cube: .884, sphere: .75, cylinder: .625, cone: .75, pyramid: .884 };
+    return r[currentFigure] * figureScale;
+  }
+
+  function startPhysics() {
+    const o = figureRoot.object3D;
+    setFloat(false, true);
+    PH.on = true;
+    PH.vel.set((Math.random() - .5) * .8, 0, (Math.random() - .5) * .8);
+    PH.w.set((Math.random() - .5) * 3, (Math.random() - .5) * 3, (Math.random() - .5) * 3);
+    PH.prev.copy(o.position);
+    PH.hasPrev = false;
+    statusEl.textContent = 'Físicas activadas: toca la figura para empujarla (en VR agárrala y lánzala). Doble clic para desactivarlas.';
+  }
+
+  function stopPhysics(goHome) {
+    const wasOn = PH.on;
+    PH.on = false;
+    PH.vel.set(0, 0, 0);
+    PH.w.set(0, 0, 0);
+    PH.hasPrev = false;
+    if (goHome) {
+      figureRoot.object3D.position.set(figureHome.x, figureHome.y, figureHome.z);
+      figureRoot.object3D.rotation.set(0, 0, 0);
+      figureRoot.setAttribute('position', figureHome);
+      figureRoot.setAttribute('rotation', '0 0 0');
+      if (wasOn) statusEl.textContent = 'Físicas desactivadas: figura devuelta a la plataforma.';
+    }
+  }
+
+  function togglePhysics() {
+    if (PH.on) stopPhysics(true);
+    else startPhysics();
+  }
+
+  function phStep(h) {
+    const o = figureRoot.object3D, p = o.position, vel = PH.vel, w = PH.w;
+    const hh = phHalfHeight(), r = phRadius();
+    const isSphere = currentFigure === 'sphere';
+    const tilt = isSphere ? 0 : .5 * (Math.abs(Math.sin(o.rotation.x)) + Math.abs(Math.sin(o.rotation.z)));
+    const hhE = hh * (1 + tilt);
+
+    vel.y -= PH_GRAVITY * h;
+    const prevBottom = p.y - hhE;
+    p.addScaledVector(vel, h);
+
+    // Costado de la plataforma
+    const dx = p.x - PLAT.x, dz = p.z - PLAT.z;
+    const dist = Math.hypot(dx, dz);
+    if (prevBottom < PLAT.top - .06 && p.y - hhE < PLAT.top - .06 && p.y + hhE > .02 && dist < PLAT.r + r * .8) {
+      const nx = dist > 1e-4 ? dx / dist : 1, nz = dist > 1e-4 ? dz / dist : 0;
+      const target = PLAT.r + r * .8;
+      p.x = PLAT.x + nx * target;
+      p.z = PLAT.z + nz * target;
+      const vn = vel.x * nx + vel.z * nz;
+      if (vn < 0) { vel.x -= (1 + PH_REST) * vn * nx; vel.z -= (1 + PH_REST) * vn * nz; }
+    }
+
+    // Suelo / plataforma
+    let floorY = 0;
+    if (Math.hypot(p.x - PLAT.x, p.z - PLAT.z) < PLAT.r + r * .6 && prevBottom >= PLAT.top - .06) floorY = PLAT.top;
+    PH.grounded = false;
+    if (p.y - hhE <= floorY) {
+      p.y = floorY + hhE;
+      if (vel.y < 0) {
+        const impact = -vel.y;
+        vel.y = impact > .8 ? impact * PH_REST : 0;
+        if (impact > 1.5) {
+          const k = Math.min(impact, 6) * .5;
+          w.x += (Math.random() - .5) * k;
+          w.z += (Math.random() - .5) * k;
+          w.y += (Math.random() - .5) * k;
+        }
+      }
+      PH.grounded = true;
+      const fr = Math.max(0, 1 - (isSphere ? .35 : 4) * h);
+      vel.x *= fr; vel.z *= fr;
+    }
+
+    // Techo y paredes
+    if (p.y + hhE > 6.4) { p.y = 6.4 - hhE; if (vel.y > 0) vel.y *= -PH_REST; }
+    const minX = -7.7 + r, maxX = 7.7 - r, minZ = -7.7 + r, maxZ = 3.7 - r;
+    if (p.x < minX) { p.x = minX; if (vel.x < 0) vel.x *= -PH_REST; }
+    if (p.x > maxX) { p.x = maxX; if (vel.x > 0) vel.x *= -PH_REST; }
+    if (p.z < minZ) { p.z = minZ; if (vel.z < 0) vel.z *= -PH_REST; }
+    if (p.z > maxZ) { p.z = maxZ; if (vel.z > 0) vel.z *= -PH_REST; }
+
+    // Rotación
+    o.rotation.y += w.y * h;
+    if (isSphere) {
+      o.rotation.x += w.x * h;
+      o.rotation.z += w.z * h;
+      if (PH.grounded) {
+        o.rotation.z -= vel.x * h / r;
+        o.rotation.x += vel.z * h / r;
+      }
+    } else {
+      o.rotation.x = THREE.MathUtils.clamp(o.rotation.x + w.x * h, -.5, .5);
+      o.rotation.z = THREE.MathUtils.clamp(o.rotation.z + w.z * h, -.5, .5);
+      if (PH.grounded) {
+        const e = Math.min(1, 6 * h);
+        o.rotation.x -= o.rotation.x * e;
+        o.rotation.z -= o.rotation.z * e;
+      }
+    }
+    const damp = Math.max(0, 1 - (PH.grounded ? 2.5 : .3) * h);
+    w.multiplyScalar(damp);
+    if (PH.grounded && vel.lengthSq() < .0025) vel.set(0, 0, 0);
+  }
+
+  function updatePhysics(dt) {
+    if (!PH.on || dt <= 0) return;
+    const p = figureRoot.object3D.position;
+
+    // Figura sostenida en VR: se calcula la velocidad de la mano para poder lanzarla
+    if (heldBy || stretch) {
+      if (PH.hasPrev) {
+        _pv.copy(p).sub(PH.prev).divideScalar(dt);
+        PH.vel.lerp(_pv, .35);
+        if (PH.vel.length() > 12) PH.vel.setLength(12);
+      }
+      PH.prev.copy(p);
+      PH.hasPrev = true;
+      PH.w.multiplyScalar(.9);
+      return;
+    }
+    PH.hasPrev = false;
+
+    const steps = 3, h = dt / steps;
+    for (let i = 0; i < steps; i++) phStep(h);
+    if (!Number.isFinite(p.x + p.y + p.z)) stopPhysics(true);
+  }
+
+  // Doble clic con el ratón sobre la figura seleccionada; un clic con físicas activas la empuja
+  function figureIdOf(el) {
+    return el.parentEl && el.parentEl.id === 'pyramid' ? 'pyramid' : el.id;
+  }
+  document.querySelectorAll('.figure-hit').forEach(el => {
+    el.addEventListener('click', () => {
+      if (figureIdOf(el) !== currentFigure || !isVisible(el.object3D)) return;
+      const now = performance.now();
+      if (now - lastClickTime < 350) {
+        lastClickTime = 0;
+        togglePhysics();
+        return;
+      }
+      lastClickTime = now;
+      if (PH.on) {
+        camera.object3D.getWorldDirection(forward);
+        PH.vel.addScaledVector(forward, 3.5);
+        PH.vel.y += 3;
+        PH.w.set((Math.random() - .5) * 8, (Math.random() - .5) * 8, (Math.random() - .5) * 8);
+      }
+    });
+  });
+
+  // ================= FLOTAR (interruptor de levitación) =================
+  const FL = { on: false, amp: 0, t: 0 };
+  const floatWrap = document.getElementById('floatWrap');
+
+  function refreshFloatUI() {
+    const btn = document.getElementById('floatBtn');
+    btn.textContent = FL.on ? 'FLOTAR: ON' : 'FLOTAR: OFF';
+    btn.classList.toggle('active', FL.on);
+    const vrTxt = document.querySelector('.vr-button[data-action="float"] a-text');
+    if (vrTxt) vrTxt.setAttribute('value', FL.on ? 'FLOTAR: ON' : 'FLOTAR: OFF');
+  }
+
+  function applyFloat() {
+    const o = floatWrap.object3D, a = FL.amp, t = FL.t;
+    o.position.y = a * (.16 + .1 * Math.sin(t * 1.9));
+    o.rotation.y = a * .5 * Math.sin(t * .8);
+    o.rotation.x = a * .06 * Math.sin(t * 1.3);
+    o.rotation.z = a * .06 * Math.cos(t * 1.1);
+  }
+
+  function setFloat(on, instant) {
+    FL.on = on;
+    if (!on && instant) { FL.amp = 0; applyFloat(); }
+    refreshFloatUI();
+  }
+
+  function toggleFloat() {
+    if (PH.on) {
+      statusEl.textContent = 'Las físicas están activas: desactívalas (doble clic en la figura) para poder flotar.';
+      return;
+    }
+    setFloat(!FL.on);
+    statusEl.textContent = FL.on ? 'Flotación activada.' : 'Flotación desactivada.';
+  }
+
+  function updateFloat(dt) {
+    if (PH.on) {                       // las físicas tienen prioridad
+      if (FL.on || FL.amp !== 0) setFloat(false, true);
+      return;
+    }
+    const target = FL.on ? 1 : 0;
+    if (!FL.on && FL.amp === 0) return;
+    FL.t += dt;
+    FL.amp += (target - FL.amp) * Math.min(1, 3 * dt);
+    if (Math.abs(target - FL.amp) < .002) FL.amp = target;
+    applyFloat();
+  }
+
+  // ================= VOLVER: salir de VR y regresar a la página principal =================
+  // Si la página se abrió desde otra (referrer) se regresa a esa; si no, se usa HOME_URL.
+  const HOME_URL = 'index.html';
+  function volver() {
+    statusEl.textContent = 'Saliendo de la realidad virtual...';
+    stopPhysics(false);
+    const goHome = () => {
+      if (document.referrer) location.href = document.referrer;
+      else location.href = HOME_URL;
+    };
+    try {
+      if (scene.is('vr-mode') && scene.exitVR) {
+        Promise.resolve(scene.exitVR()).then(goHome, goHome);
+        return;
+      }
+    } catch (e) { /* si falla, se regresa igualmente */ }
+    goHome();
+  }
 
   // INICIAR
   selectFigure('cube');
